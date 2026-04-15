@@ -31,7 +31,7 @@
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
-  --bg-primary: #f9fafb;
+  --bg-primary: #f5f6f8;
   --bg-secondary: #f3f4f6;
   --border-color: #e5e7eb;
   --danger: #ef4444;
@@ -48,6 +48,7 @@
   --radius-sm: 8px;
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --transition: 0.2s ease;
+  --header-gradient: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
 }
 
 [data-theme="dark"] {
@@ -65,6 +66,7 @@
   --warning-light: #451a03;
   --info-light: #1e3a5f;
   --emerald-light: #064e3b;
+  --header-gradient: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
 }
 
 html {
@@ -98,10 +100,16 @@ input, select, textarea {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 10px 14px;
-  background: var(--card-bg);
+  background: #ffffff;
   color: var(--text-primary);
   transition: border-color var(--transition);
   width: 100%;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--card-bg);
 }
 
 input:focus, select:focus, textarea:focus {
@@ -381,7 +389,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .page-header {
-  background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
+  background: var(--header-gradient);
   padding: 32px 32px 28px;
   color: #fff;
 }
@@ -473,6 +481,8 @@ input:focus, select:focus, textarea:focus {
 .stat-card-icon.income { background: var(--success-light); color: var(--success); }
 .stat-card-icon.expense { background: var(--danger-light); color: var(--danger); }
 .stat-card-icon.net { background: var(--info-light); color: var(--info); }
+.stat-card-icon.warning { background: var(--warning-light); color: var(--warning); }
+.stat-card-icon.emerald { background: var(--emerald-light); color: var(--emerald); }
 
 .stat-card-value {
   font-size: 1.6rem;
@@ -911,6 +921,18 @@ input:focus, select:focus, textarea:focus {
 /* ============================================
    CATEGORIES PAGE
    ============================================ */
+.category-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 24px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.category-section-title:first-child { margin-top: 0; }
+
 .category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1371,6 +1393,130 @@ input:focus, select:focus, textarea:focus {
   background: var(--border-color);
   border-radius: 3px;
 }
+
+/* ============================================
+   PHASE 2 STYLES
+   ============================================ */
+/* Bill Tracker */
+.bill-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow var(--transition);
+}
+.bill-card:hover { box-shadow: var(--card-shadow-hover); }
+.bill-card-info { flex: 1; min-width: 0; }
+.bill-card-name { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+.bill-card-meta { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
+.bill-card-amount { font-weight: 700; font-size: 1.1rem; white-space: nowrap; }
+.bill-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.bill-card-actions button { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted); transition: all var(--transition); }
+.bill-card-actions button:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.bill-card-actions button.delete:hover { background: var(--danger-light); color: var(--danger); }
+.bill-card-actions button svg { width: 16px; height: 16px; }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+.badge-autopay { background: var(--success-light); color: var(--success); }
+.badge-paid { background: var(--success-light); color: var(--success); }
+.badge-unpaid { background: var(--warning-light); color: var(--warning); }
+.badge-type { background: var(--info-light); color: var(--info); }
+
+.bill-list, .goal-list, .debt-list { display: flex; flex-direction: column; gap: 12px; }
+
+.bill-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 24px; }
+.bill-cal-header { text-align: center; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); padding: 4px; }
+.bill-cal-day { text-align: center; padding: 6px 4px; font-size: 0.78rem; border-radius: 6px; position: relative; min-height: 36px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bill-cal-day.has-bill { background: var(--emerald-light); font-weight: 600; }
+.bill-cal-day.empty { color: var(--text-muted); opacity: 0.3; }
+.bill-cal-dots { display: flex; gap: 2px; }
+.bill-cal-dots span { width: 5px; height: 5px; border-radius: 50%; }
+
+/* Mark paid/unpaid toggle */
+.btn-mark-paid { padding: 4px 10px; font-size: 0.75rem; border-radius: 4px; font-weight: 600; }
+
+/* Savings Goals */
+.goal-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+  transition: box-shadow var(--transition);
+}
+.goal-card:hover { box-shadow: var(--card-shadow-hover); }
+.goal-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.goal-card-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--emerald-light); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+.goal-card-title { font-weight: 600; font-size: 1rem; flex: 1; }
+.goal-card-target { font-size: 0.82rem; color: var(--text-secondary); }
+.goal-progress { margin-bottom: 10px; }
+.goal-progress-bar { height: 10px; background: var(--bg-secondary); border-radius: 5px; overflow: hidden; margin-bottom: 6px; }
+.goal-progress-fill { height: 100%; border-radius: 5px; background: var(--emerald); transition: width 0.8s ease; }
+.goal-progress-info { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-secondary); }
+.goal-card-actions { display: flex; gap: 4px; }
+.goal-card-actions button { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted); transition: all var(--transition); }
+.goal-card-actions button:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.goal-card-actions button.delete:hover { background: var(--danger-light); color: var(--danger); }
+.goal-card-actions button svg { width: 14px; height: 14px; }
+
+.goal-deposits { margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 10px; }
+.goal-deposits-toggle { font-size: 0.8rem; color: var(--emerald); cursor: pointer; font-weight: 500; background: none; border: none; padding: 0; }
+.goal-deposits-toggle:hover { text-decoration: underline; }
+.goal-deposit-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.82rem; border-bottom: 1px solid var(--border-color); }
+.goal-deposit-item:last-child { border-bottom: none; }
+
+/* Debt Payoff */
+.debt-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+  transition: box-shadow var(--transition);
+}
+.debt-card:hover { box-shadow: var(--card-shadow-hover); }
+.debt-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.debt-card-name { font-weight: 600; font-size: 1rem; flex: 1; }
+.debt-card-balance { font-weight: 700; font-size: 1.2rem; color: var(--danger); }
+.debt-card-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.debt-detail-item { font-size: 0.78rem; color: var(--text-secondary); }
+.debt-detail-item strong { display: block; font-size: 0.92rem; color: var(--text-primary); }
+.debt-card-actions { display: flex; gap: 4px; }
+.debt-card-actions button { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted); transition: all var(--transition); }
+.debt-card-actions button:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.debt-card-actions button.delete:hover { background: var(--danger-light); color: var(--danger); }
+.debt-card-actions button svg { width: 14px; height: 14px; }
+
+.debt-payments { margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 10px; }
+.debt-payment-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.82rem; border-bottom: 1px solid var(--border-color); }
+.debt-payment-item:last-child { border-bottom: none; }
+
+.strategy-toggle { display: flex; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 16px; }
+.strategy-toggle button { flex: 1; padding: 10px 16px; font-weight: 600; font-size: 0.88rem; transition: all var(--transition); color: var(--text-secondary); background: var(--card-bg); }
+.strategy-toggle button.active { background: var(--emerald); color: #fff; }
+.strategy-desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; padding: 12px; background: var(--bg-secondary); border-radius: var(--radius-sm); }
+
+/* Tip cards */
+.tip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 32px; }
+.tip-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.tip-card-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--emerald-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem; }
+.tip-card-content h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
+.tip-card-content p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+
+/* Icon picker */
+.icon-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.icon-picker-item { width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; transition: all var(--transition); background: var(--card-bg); }
+.icon-picker-item:hover { border-color: var(--emerald); }
+.icon-picker-item.selected { border-color: var(--emerald); background: var(--emerald-light); }
 </style>
 </head>
 <body>
@@ -1427,7 +1573,6 @@ input:focus, select:focus, textarea:focus {
       <button class="sidebar-link" data-page="bills">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
         Bill Tracker
-        <span class="coming-soon">Soon</span>
       </button>
 
       <!-- SAVINGS & DEBT -->
@@ -1435,12 +1580,10 @@ input:focus, select:focus, textarea:focus {
       <button class="sidebar-link" data-page="savings">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         Savings Goals
-        <span class="coming-soon">Soon</span>
       </button>
       <button class="sidebar-link" data-page="debt">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
         Debt Payoff
-        <span class="coming-soon">Soon</span>
       </button>
 
       <!-- INSIGHTS -->
@@ -1562,9 +1705,11 @@ input:focus, select:focus, textarea:focus {
 
           <div class="card" style="grid-column: 1 / -1;">
             <div class="card-title">Upcoming Bills</div>
-            <div class="placeholder-box">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              <p>Bill tracking coming in Phase 2. Stay tuned!</p>
+            <div id="dash-upcoming-bills">
+              <div class="placeholder-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <p>No bills added yet. Add bills in the Bill Tracker to see upcoming due dates here.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1652,7 +1797,7 @@ input:focus, select:focus, textarea:focus {
             Add Category
           </button>
         </div>
-        <div class="category-grid" id="category-grid">
+        <div id="category-container">
         </div>
       </div>
     </div>
@@ -1694,47 +1839,149 @@ input:focus, select:focus, textarea:focus {
       </div>
     </div>
 
-    <!-- ========== BILL TRACKER (Coming Soon) ========== -->
+    <!-- ========== BILL TRACKER ========== -->
     <div class="page" id="page-bills">
       <div class="page-header">
         <h2>Bill Tracker</h2>
-        <p>Track and manage recurring bills</p>
+        <p>Manage recurring bills and due dates</p>
       </div>
       <div class="page-body">
-        <div class="coming-soon-page">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          <h3>Coming Soon</h3>
-          <p>Bill tracking with calendar view, due date alerts, and auto-pay flagging will be available in Phase 2.</p>
+        <div class="stat-grid" id="bills-stats"></div>
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-title">Bill Calendar</div>
+          <div class="bill-calendar" id="bill-calendar"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div class="card-title" style="margin-bottom:0;">Your Bills</div>
+          <button class="btn btn-primary" id="btn-add-bill">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Bill
+          </button>
+        </div>
+        <div class="bill-list" id="bill-list"></div>
+        <div class="tip-grid">
+          <div class="tip-card">
+            <div class="tip-card-icon">&#9889;</div>
+            <div class="tip-card-content">
+              <h4>Automate First</h4>
+              <p>Set up auto-pay for fixed bills like rent and insurance. One less thing to forget.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-icon">&#128197;</div>
+            <div class="tip-card-content">
+              <h4>Due Date Strategy</h4>
+              <p>Try to align bill due dates near your paydays. Most companies let you change due dates with a call.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-icon">&#128269;</div>
+            <div class="tip-card-content">
+              <h4>Review Annually</h4>
+              <p>Check each bill yearly. Insurance, subscriptions, and utilities often have better rates available.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ========== SAVINGS GOALS (Coming Soon) ========== -->
+    <!-- ========== SAVINGS GOALS ========== -->
     <div class="page" id="page-savings">
       <div class="page-header">
         <h2>Savings Goals</h2>
-        <p>Set and track your savings targets</p>
+        <p>Save toward what matters most</p>
       </div>
       <div class="page-body">
-        <div class="coming-soon-page">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <h3>Coming Soon</h3>
-          <p>Create savings goals with progress tracking, deposits, and estimated completion dates. Coming in Phase 2.</p>
+        <div class="stat-grid" id="savings-stats"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div class="card-title" style="margin-bottom:0;">Your Goals</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary" id="btn-add-deposit-top">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Add Deposit
+            </button>
+            <button class="btn btn-primary" id="btn-add-goal">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              New Goal
+            </button>
+          </div>
+        </div>
+        <div class="goal-list" id="goal-list"></div>
+        <div class="tip-grid">
+          <div class="tip-card">
+            <div class="tip-card-icon">&#128176;</div>
+            <div class="tip-card-content">
+              <h4>Pay Yourself First</h4>
+              <p>Treat savings like a bill. Transfer money to your goal the day you get paid, before spending.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-icon">&#127793;</div>
+            <div class="tip-card-content">
+              <h4>Start Small</h4>
+              <p>Even $25/week adds up to $1,300/year. Consistency beats big one-time deposits.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-icon">&#128200;</div>
+            <div class="tip-card-content">
+              <h4>Visualize Progress</h4>
+              <p>Watching your progress bar grow is motivating. Check in weekly to stay on track.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ========== DEBT PAYOFF (Coming Soon) ========== -->
+    <!-- ========== DEBT PAYOFF ========== -->
     <div class="page" id="page-debt">
       <div class="page-header">
         <h2>Debt Payoff</h2>
-        <p>Plan your path to being debt-free</p>
+        <p>Track your path to debt freedom</p>
       </div>
       <div class="page-body">
-        <div class="coming-soon-page">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-          <h3>Coming Soon</h3>
-          <p>Snowball and avalanche payoff strategies, payment tracking, and timeline estimates. Coming in Phase 2.</p>
+        <div class="stat-grid" id="debt-stats"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div class="card-title" style="margin-bottom:0;">Your Debts</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary" id="btn-add-debt-payment-top">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Record Payment
+            </button>
+            <button class="btn btn-primary" id="btn-add-debt">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Add Debt
+            </button>
+          </div>
+        </div>
+        <div class="strategy-toggle" id="debt-strategy-toggle">
+          <button class="active" data-strategy="snowball">Snowball</button>
+          <button data-strategy="avalanche">Avalanche</button>
+        </div>
+        <div class="strategy-desc" id="debt-strategy-desc">Pay minimums on everything, throw extra money at the smallest balance. Quick wins build momentum.</div>
+        <div class="debt-list" id="debt-list"></div>
+        <div class="tip-grid">
+          <div class="tip-card">
+            <div class="tip-card-icon">&#127919;</div>
+            <div class="tip-card-content">
+              <h4>Pick a Strategy</h4>
+              <p>Snowball gives quick wins for motivation. Avalanche saves more money. Pick the one you'll stick with.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-icon">&#128640;</div>
+            <div class="tip-card-content">
+              <h4>Extra Payments</h4>
+              <p>Even $50 extra per month on your target debt can shave months or years off your payoff date.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-icon">&#10060;</div>
+            <div class="tip-card-content">
+              <h4>Avoid New Debt</h4>
+              <p>While paying off debt, freeze credit card spending. Use cash or debit to avoid backsliding.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1860,7 +2107,248 @@ input:focus, select:focus, textarea:focus {
           <label for="cat-color">Color</label>
           <input type="color" id="cat-color" value="#10b981" style="width:60px;height:40px;padding:4px;cursor:pointer;">
         </div>
+        <div class="form-group">
+          <label for="cat-type">Type</label>
+          <select id="cat-type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </div>
         <button type="submit" class="btn btn-primary btn-block" id="cat-submit-btn">Add Category</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     BILL MODAL
+     ========================================== -->
+<div class="modal-overlay" id="modal-bill">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="bill-modal-title">Add Bill</h3>
+      <button class="modal-close" id="bill-modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="bill-form" autocomplete="off">
+        <input type="hidden" id="bill-edit-id" value="">
+        <div class="form-group">
+          <label for="bill-name">Bill Name</label>
+          <input type="text" id="bill-name" placeholder="e.g., Rent, Netflix" maxlength="100" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bill-amount">Amount ($)</label>
+            <input type="number" id="bill-amount" step="0.01" min="0.01" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label for="bill-due-day">Due Day (1-31)</label>
+            <input type="number" id="bill-due-day" min="1" max="31" placeholder="1" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bill-frequency">Frequency</label>
+            <select id="bill-frequency" required>
+              <option value="monthly">Monthly</option>
+              <option value="weekly">Weekly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bill-category">Category</label>
+            <select id="bill-category"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bill-autopay">Auto-Pay</label>
+          <select id="bill-autopay">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bill-notes">Notes</label>
+          <input type="text" id="bill-notes" placeholder="Optional notes" maxlength="200">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="bill-submit-btn">Add Bill</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     SAVINGS GOAL MODAL
+     ========================================== -->
+<div class="modal-overlay" id="modal-goal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="goal-modal-title">Add Savings Goal</h3>
+      <button class="modal-close" id="goal-modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="goal-form" autocomplete="off">
+        <input type="hidden" id="goal-edit-id" value="">
+        <div class="form-group">
+          <label for="goal-name">Goal Name</label>
+          <input type="text" id="goal-name" placeholder="e.g., Emergency Fund" maxlength="100" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="goal-target">Target Amount ($)</label>
+            <input type="number" id="goal-target" step="0.01" min="1" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label for="goal-date">Target Date (optional)</label>
+            <input type="date" id="goal-date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Icon</label>
+          <div class="icon-picker" id="goal-icon-picker">
+            <div class="icon-picker-item selected" data-icon="&#128176;">&#128176;</div>
+            <div class="icon-picker-item" data-icon="&#127968;">&#127968;</div>
+            <div class="icon-picker-item" data-icon="&#9992;">&#9992;</div>
+            <div class="icon-picker-item" data-icon="&#128663;">&#128663;</div>
+            <div class="icon-picker-item" data-icon="&#127891;">&#127891;</div>
+            <div class="icon-picker-item" data-icon="&#128141;">&#128141;</div>
+            <div class="icon-picker-item" data-icon="&#128187;">&#128187;</div>
+            <div class="icon-picker-item" data-icon="&#127873;">&#127873;</div>
+            <div class="icon-picker-item" data-icon="&#11088;">&#11088;</div>
+            <div class="icon-picker-item" data-icon="&#128142;">&#128142;</div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="goal-submit-btn">Create Goal</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     SAVINGS DEPOSIT MODAL
+     ========================================== -->
+<div class="modal-overlay" id="modal-deposit">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Deposit</h3>
+      <button class="modal-close" id="deposit-modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="deposit-form" autocomplete="off">
+        <div class="form-group">
+          <label for="deposit-goal">Goal</label>
+          <select id="deposit-goal" required></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="deposit-amount">Amount ($)</label>
+            <input type="number" id="deposit-amount" step="0.01" min="0.01" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label for="deposit-date">Date</label>
+            <input type="date" id="deposit-date" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="deposit-note">Note (optional)</label>
+          <input type="text" id="deposit-note" placeholder="e.g., Birthday money" maxlength="200">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Add Deposit</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     DEBT MODAL
+     ========================================== -->
+<div class="modal-overlay" id="modal-debt">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="debt-modal-title">Add Debt</h3>
+      <button class="modal-close" id="debt-modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="debt-form" autocomplete="off">
+        <input type="hidden" id="debt-edit-id" value="">
+        <div class="form-group">
+          <label for="debt-name">Debt Name</label>
+          <input type="text" id="debt-name" placeholder="e.g., Chase Sapphire" maxlength="100" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="debt-balance">Current Balance ($)</label>
+            <input type="number" id="debt-balance" step="0.01" min="0" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label for="debt-rate">Interest Rate (%)</label>
+            <input type="number" id="debt-rate" step="0.01" min="0" max="100" placeholder="0.00" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="debt-min-payment">Min Monthly Payment ($)</label>
+            <input type="number" id="debt-min-payment" step="0.01" min="0" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label for="debt-type">Type</label>
+            <select id="debt-type" required>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Student Loan">Student Loan</option>
+              <option value="Car Loan">Car Loan</option>
+              <option value="Mortgage">Mortgage</option>
+              <option value="Personal Loan">Personal Loan</option>
+              <option value="Medical">Medical</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="debt-submit-btn">Add Debt</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     DEBT PAYMENT MODAL
+     ========================================== -->
+<div class="modal-overlay" id="modal-debt-payment">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Record Payment</h3>
+      <button class="modal-close" id="debt-payment-modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="debt-payment-form" autocomplete="off">
+        <div class="form-group">
+          <label for="debt-payment-debt">Debt</label>
+          <select id="debt-payment-debt" required></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="debt-payment-amount">Amount ($)</label>
+            <input type="number" id="debt-payment-amount" step="0.01" min="0.01" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label for="debt-payment-date">Date</label>
+            <input type="date" id="debt-payment-date" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="debt-payment-note">Note (optional)</label>
+          <input type="text" id="debt-payment-note" placeholder="e.g., Extra payment" maxlength="200">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Record Payment</button>
       </form>
     </div>
   </div>
@@ -1894,26 +2382,32 @@ input:focus, select:focus, textarea:focus {
   // CONSTANTS
   // ============================================
   const DEFAULT_CATEGORIES = [
-    { name: 'Housing', color: '#6366f1', icon: 'home', isDefault: true, order: 0 },
-    { name: 'Utilities', color: '#f59e0b', icon: 'zap', isDefault: true, order: 1 },
-    { name: 'Groceries', color: '#10b981', icon: 'shopping-cart', isDefault: true, order: 2 },
-    { name: 'Transportation', color: '#3b82f6', icon: 'car', isDefault: true, order: 3 },
-    { name: 'Dining Out', color: '#ef4444', icon: 'utensils', isDefault: true, order: 4 },
-    { name: 'Entertainment', color: '#8b5cf6', icon: 'film', isDefault: true, order: 5 },
-    { name: 'Healthcare', color: '#ec4899', icon: 'heart', isDefault: true, order: 6 },
-    { name: 'Insurance', color: '#06b6d4', icon: 'shield', isDefault: true, order: 7 },
-    { name: 'Clothing', color: '#f97316', icon: 'shirt', isDefault: true, order: 8 },
-    { name: 'Personal Care', color: '#14b8a6', icon: 'smile', isDefault: true, order: 9 },
-    { name: 'Education', color: '#6366f1', icon: 'book', isDefault: true, order: 10 },
-    { name: 'Subscriptions', color: '#a855f7', icon: 'repeat', isDefault: true, order: 11 },
-    { name: 'Gifts', color: '#f43f5e', icon: 'gift', isDefault: true, order: 12 },
-    { name: 'Savings', color: '#22c55e', icon: 'piggy-bank', isDefault: true, order: 13 },
-    { name: 'Debt Payments', color: '#64748b', icon: 'credit-card', isDefault: true, order: 14 },
-    { name: 'Misc', color: '#9ca3af', icon: 'more-horizontal', isDefault: true, order: 15 }
+    { name: 'Housing', color: '#6366f1', icon: 'home', isDefault: true, order: 0, type: 'expense' },
+    { name: 'Utilities', color: '#f59e0b', icon: 'zap', isDefault: true, order: 1, type: 'expense' },
+    { name: 'Groceries', color: '#10b981', icon: 'shopping-cart', isDefault: true, order: 2, type: 'expense' },
+    { name: 'Transportation', color: '#3b82f6', icon: 'car', isDefault: true, order: 3, type: 'expense' },
+    { name: 'Dining Out', color: '#ef4444', icon: 'utensils', isDefault: true, order: 4, type: 'expense' },
+    { name: 'Entertainment', color: '#8b5cf6', icon: 'film', isDefault: true, order: 5, type: 'expense' },
+    { name: 'Healthcare', color: '#ec4899', icon: 'heart', isDefault: true, order: 6, type: 'expense' },
+    { name: 'Insurance', color: '#06b6d4', icon: 'shield', isDefault: true, order: 7, type: 'expense' },
+    { name: 'Clothing', color: '#f97316', icon: 'shirt', isDefault: true, order: 8, type: 'expense' },
+    { name: 'Personal Care', color: '#14b8a6', icon: 'smile', isDefault: true, order: 9, type: 'expense' },
+    { name: 'Education', color: '#6366f1', icon: 'book', isDefault: true, order: 10, type: 'expense' },
+    { name: 'Subscriptions', color: '#a855f7', icon: 'repeat', isDefault: true, order: 11, type: 'expense' },
+    { name: 'Gifts', color: '#f43f5e', icon: 'gift', isDefault: true, order: 12, type: 'expense' },
+    { name: 'Savings', color: '#22c55e', icon: 'piggy-bank', isDefault: true, order: 13, type: 'expense' },
+    { name: 'Debt Payments', color: '#64748b', icon: 'credit-card', isDefault: true, order: 14, type: 'expense' },
+    { name: 'Misc', color: '#9ca3af', icon: 'more-horizontal', isDefault: true, order: 15, type: 'expense' },
+    { name: 'Salary', color: '#22c55e', icon: 'salary', isDefault: true, order: 100, type: 'income' },
+    { name: 'Freelance', color: '#3b82f6', icon: 'freelance', isDefault: true, order: 101, type: 'income' },
+    { name: 'Bonus', color: '#f59e0b', icon: 'bonus', isDefault: true, order: 102, type: 'income' },
+    { name: 'Interest', color: '#06b6d4', icon: 'interest', isDefault: true, order: 103, type: 'income' },
+    { name: 'Gifts Received', color: '#ec4899', icon: 'gift-received', isDefault: true, order: 104, type: 'income' },
+    { name: 'Other Income', color: '#9ca3af', icon: 'other-income', isDefault: true, order: 105, type: 'income' }
   ];
 
   const DB_NAME = 'BudgetTrackerDB';
-  const DB_VERSION = 1;
+  const DB_VERSION = 2;
 
   // ============================================
   // STATE
@@ -1921,8 +2415,10 @@ input:focus, select:focus, textarea:focus {
   let db = null;
   let currentPage = 'dashboard';
   let currentTxnType = 'expense';
-  let dashMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-  let budgetMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+  let dashMonth = new Date().toISOString().slice(0, 7);
+  let budgetMonth = new Date().toISOString().slice(0, 7);
+  let debtStrategy = 'snowball';
+  let selectedGoalIcon = '\u{1F4B0}';
 
   // ============================================
   // INDEXEDDB
@@ -1951,6 +2447,29 @@ input:focus, select:focus, textarea:focus {
           const budStore = database.createObjectStore('budgets', { keyPath: 'id' });
           budStore.createIndex('month', 'month', { unique: false });
           budStore.createIndex('categoryId', 'categoryId', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('bills')) {
+          const billStore = database.createObjectStore('bills', { keyPath: 'id' });
+          billStore.createIndex('dueDay', 'dueDay', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('billPayments')) {
+          const bpStore = database.createObjectStore('billPayments', { keyPath: 'id' });
+          bpStore.createIndex('billId', 'billId', { unique: false });
+          bpStore.createIndex('month', 'month', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('savingsGoals')) {
+          const sgStore = database.createObjectStore('savingsGoals', { keyPath: 'id' });
+        }
+        if (!database.objectStoreNames.contains('savingsDeposits')) {
+          const sdStore = database.createObjectStore('savingsDeposits', { keyPath: 'id' });
+          sdStore.createIndex('goalId', 'goalId', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('debts')) {
+          const debtStore = database.createObjectStore('debts', { keyPath: 'id' });
+        }
+        if (!database.objectStoreNames.contains('debtPayments')) {
+          const dpStore = database.createObjectStore('debtPayments', { keyPath: 'id' });
+          dpStore.createIndex('debtId', 'debtId', { unique: false });
         }
       };
     });
@@ -2046,6 +2565,10 @@ input:focus, select:focus, textarea:focus {
     return div.innerHTML;
   }
 
+  function getCurrentMonth() {
+    return new Date().toISOString().slice(0, 7);
+  }
+
   // ============================================
   // CONFIRM DIALOG
   // ============================================
@@ -2111,11 +2634,34 @@ input:focus, select:focus, textarea:focus {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-overlay').classList.remove('open');
 
+    // Update FAB context
+    updateFAB();
+
     // Refresh page data
     if (page === 'dashboard') refreshDashboard();
     else if (page === 'transactions') refreshTransactions();
     else if (page === 'categories') refreshCategories();
     else if (page === 'budget') refreshBudget();
+    else if (page === 'bills') refreshBills();
+    else if (page === 'savings') refreshSavings();
+    else if (page === 'debt') refreshDebt();
+  }
+
+  function updateFAB() {
+    const fab = document.getElementById('fab-add');
+    if (currentPage === 'bills') {
+      fab.title = 'Add bill';
+      fab.setAttribute('aria-label', 'Add bill');
+    } else if (currentPage === 'savings') {
+      fab.title = 'Add deposit';
+      fab.setAttribute('aria-label', 'Add deposit');
+    } else if (currentPage === 'debt') {
+      fab.title = 'Record payment';
+      fab.setAttribute('aria-label', 'Record payment');
+    } else {
+      fab.title = 'Quick add transaction';
+      fab.setAttribute('aria-label', 'Add transaction');
+    }
   }
 
   document.querySelectorAll('.sidebar-link').forEach(link => {
@@ -2156,6 +2702,24 @@ input:focus, select:focus, textarea:focus {
       for (const cat of DEFAULT_CATEGORIES) {
         await dbPut('categories', { ...cat, id: generateId() });
       }
+    } else {
+      // Migration: add type field to existing categories that lack it
+      let needsMigration = false;
+      for (const cat of cats) {
+        if (!cat.type) {
+          cat.type = 'expense';
+          await dbPut('categories', cat);
+          needsMigration = true;
+        }
+      }
+      // Check if income categories exist
+      const hasIncome = cats.some(c => c.type === 'income');
+      if (!hasIncome) {
+        const incomeDefaults = DEFAULT_CATEGORIES.filter(c => c.type === 'income');
+        for (const cat of incomeDefaults) {
+          await dbPut('categories', { ...cat, id: generateId() });
+        }
+      }
     }
   }
 
@@ -2177,20 +2741,26 @@ input:focus, select:focus, textarea:focus {
   }
 
   // ============================================
-  // POPULATE CATEGORY SELECT
+  // POPULATE CATEGORY SELECT (filtered by type)
   // ============================================
-  async function populateCategorySelect(selectId) {
+  async function populateCategorySelect(selectId, filterType) {
     const cats = await getCategoriesList();
     const select = document.getElementById(selectId);
     const currentVal = select.value;
     select.innerHTML = '<option value="">Select category</option>';
-    cats.forEach(c => {
+    const filtered = filterType ? cats.filter(c => (c.type || 'expense') === filterType) : cats;
+    filtered.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.id;
       opt.textContent = c.name;
       select.appendChild(opt);
     });
     if (currentVal) select.value = currentVal;
+  }
+
+  // Populate for expense categories only (bills)
+  async function populateExpenseCategorySelect(selectId) {
+    await populateCategorySelect(selectId, 'expense');
   }
 
   // ============================================
@@ -2230,12 +2800,67 @@ input:focus, select:focus, textarea:focus {
     netEl.textContent = (net < 0 ? '-' : '') + formatCurrency(net);
     netEl.style.color = net >= 0 ? 'var(--success)' : 'var(--danger)';
 
-    // Donut chart
     renderDonutChart(monthTxns, catMap);
-
-    // Recent transactions (for selected month)
     const recentForMonth = transactions.filter(t => t.date.startsWith(currentMonth));
     renderRecentTransactions(recentForMonth, catMap);
+    renderDashboardUpcomingBills();
+  }
+
+  async function renderDashboardUpcomingBills() {
+    const container = document.getElementById('dash-upcoming-bills');
+    const bills = await dbGetAll('bills');
+    if (bills.length === 0) {
+      container.innerHTML = `<div class="placeholder-box">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <p>No bills added yet. Add bills in the Bill Tracker to see upcoming due dates here.</p>
+      </div>`;
+      return;
+    }
+
+    const today = new Date();
+    const todayDay = today.getDate();
+    const currentMonth = getCurrentMonth();
+    const billPayments = await dbGetAll('billPayments');
+    const catMap = await getCategoriesMap();
+
+    // Find bills due in next 7 days
+    const upcoming = [];
+    bills.forEach(bill => {
+      const dueDay = bill.dueDay;
+      let daysUntilDue = dueDay - todayDay;
+      if (daysUntilDue < 0) daysUntilDue += 30; // approximate for next month
+      if (daysUntilDue <= 7) {
+        const payment = billPayments.find(p => p.billId === bill.id && p.month === currentMonth);
+        const paid = payment ? payment.paid : false;
+        upcoming.push({ ...bill, daysUntilDue, paid });
+      }
+    });
+
+    upcoming.sort((a, b) => a.daysUntilDue - b.daysUntilDue);
+
+    if (upcoming.length === 0) {
+      container.innerHTML = '<div class="placeholder-box"><p>No bills due in the next 7 days.</p></div>';
+      return;
+    }
+
+    const items = upcoming.slice(0, 5).map(bill => {
+      const cat = catMap[bill.categoryId];
+      const catColor = cat ? cat.color : '#9ca3af';
+      const statusBadge = bill.paid
+        ? '<span class="badge badge-paid">Paid</span>'
+        : '<span class="badge badge-unpaid">Due</span>';
+      const dueText = bill.daysUntilDue === 0 ? 'Due today' : bill.daysUntilDue === 1 ? 'Due tomorrow' : `Due in ${bill.daysUntilDue} days`;
+      return `<div class="transaction-item">
+        <span class="transaction-cat-dot" style="background:${catColor}"></span>
+        <div class="transaction-info">
+          <div class="transaction-desc">${escapeHtml(bill.name)} ${statusBadge}</div>
+          <div class="transaction-meta">${dueText} &middot; Day ${bill.dueDay}</div>
+        </div>
+        <span class="transaction-amount expense">${formatCurrency(bill.amount)}</span>
+      </div>`;
+    }).join('');
+
+    container.innerHTML = `<div class="transaction-list">${items}</div>`;
   }
 
   function renderDonutChart(monthTxns, catMap) {
@@ -2253,16 +2878,13 @@ input:focus, select:focus, textarea:focus {
       return;
     }
 
-    // Group by category
     const catTotals = {};
     expenses.forEach(t => {
       catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
     });
 
-    // Sort by amount descending
     const sorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
 
-    // Build conic gradient
     let gradientParts = [];
     let cumulative = 0;
     sorted.forEach(([catId, amount]) => {
@@ -2370,13 +2992,8 @@ input:focus, select:focus, textarea:focus {
         return (t.description || '').toLowerCase().includes(search) || catName.includes(search);
       });
     }
-    if (typeFilter !== 'all') {
-      filtered = filtered.filter(t => t.type === typeFilter);
-    }
-    if (catFilter !== 'all') {
-      filtered = filtered.filter(t => t.category === catFilter);
-    }
-
+    if (typeFilter !== 'all') filtered = filtered.filter(t => t.type === typeFilter);
+    if (catFilter !== 'all') filtered = filtered.filter(t => t.category === catFilter);
     filtered.sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
 
     if (filtered.length === 0) {
@@ -2416,7 +3033,6 @@ input:focus, select:focus, textarea:focus {
     container.innerHTML = items;
   }
 
-  // Transaction form filters
   document.getElementById('txn-search').addEventListener('input', () => refreshTransactions());
   document.getElementById('txn-filter-type').addEventListener('change', () => refreshTransactions());
   document.getElementById('txn-filter-category').addEventListener('change', () => refreshTransactions());
@@ -2436,7 +3052,6 @@ input:focus, select:focus, textarea:focus {
       document.getElementById('txn-edit-id').value = editTxn.id;
       document.getElementById('txn-amount').value = editTxn.amount;
       document.getElementById('txn-date').value = editTxn.date;
-      document.getElementById('txn-category').value = editTxn.category;
       document.getElementById('txn-description').value = editTxn.description || '';
       currentTxnType = editTxn.type;
     } else {
@@ -2447,7 +3062,7 @@ input:focus, select:focus, textarea:focus {
     }
 
     updateTypeToggle();
-    populateCategorySelect('txn-category').then(() => {
+    populateCategorySelect('txn-category', currentTxnType).then(() => {
       if (editTxn) document.getElementById('txn-category').value = editTxn.category;
     });
     modal.classList.add('open');
@@ -2467,6 +3082,7 @@ input:focus, select:focus, textarea:focus {
     btn.addEventListener('click', () => {
       currentTxnType = btn.dataset.type;
       updateTypeToggle();
+      populateCategorySelect('txn-category', currentTxnType);
     });
   });
 
@@ -2504,7 +3120,6 @@ input:focus, select:focus, textarea:focus {
     };
 
     if (editId) {
-      // Preserve createdAt
       const all = await dbGetAll('transactions');
       const existing = all.find(t => t.id === editId);
       if (existing) txnData.createdAt = existing.createdAt;
@@ -2521,7 +3136,12 @@ input:focus, select:focus, textarea:focus {
   });
 
   // FAB + add buttons
-  document.getElementById('fab-add').addEventListener('click', () => openTransactionModal());
+  document.getElementById('fab-add').addEventListener('click', () => {
+    if (currentPage === 'bills') openBillModal();
+    else if (currentPage === 'savings') openDepositModal();
+    else if (currentPage === 'debt') openDebtPaymentModal();
+    else openTransactionModal();
+  });
   document.getElementById('btn-add-txn').addEventListener('click', () => openTransactionModal());
 
   // Global edit/delete
@@ -2551,59 +3171,70 @@ input:focus, select:focus, textarea:focus {
     const transactions = await dbGetAll('transactions');
     const budgets = await dbGetAll('budgets');
     const currentMonth = new Date().toISOString().slice(0, 7);
-    const container = document.getElementById('category-grid');
+    const container = document.getElementById('category-container');
 
     const monthTxns = transactions.filter(t => t.date.startsWith(currentMonth) && t.type === 'expense');
 
-    const cards = cats.map(cat => {
-      const spent = monthTxns.filter(t => t.category === cat.id).reduce((s, t) => s + t.amount, 0);
-      const budget = budgets.find(b => b.categoryId === cat.id && b.month === currentMonth);
-      const budgetAmt = budget ? budget.amount : 0;
-      const pct = budgetAmt > 0 ? Math.min((spent / budgetAmt) * 100, 100) : 0;
-      const overBudget = budgetAmt > 0 && spent > budgetAmt;
-      const barColor = overBudget ? 'var(--danger)' : cat.color;
+    const expenseCats = cats.filter(c => (c.type || 'expense') === 'expense');
+    const incomeCats = cats.filter(c => c.type === 'income');
 
-      const budgetInfo = budgetAmt > 0
-        ? `<div class="category-progress"><div class="category-progress-bar animate-bar" style="width:${pct}%;background:${barColor}"></div></div>
-           <div class="category-spend-info">
-             <span>${formatCurrency(spent)} of ${formatCurrency(budgetAmt)}</span>
-             ${overBudget ? `<span class="over-budget">Over by ${formatCurrency(spent - budgetAmt)}</span>` : `<span>${(100 - pct).toFixed(0)}% remaining</span>`}
-           </div>`
-        : `<div class="category-spend-info"><span>Spent: ${formatCurrency(spent)}</span><span>No budget set</span></div>`;
+    function renderCatCards(catList) {
+      return catList.map(cat => {
+        const spent = monthTxns.filter(t => t.category === cat.id).reduce((s, t) => s + t.amount, 0);
+        const budget = budgets.find(b => b.categoryId === cat.id && b.month === currentMonth);
+        const budgetAmt = budget ? budget.amount : 0;
+        const pct = budgetAmt > 0 ? Math.min((spent / budgetAmt) * 100, 100) : 0;
+        const overBudget = budgetAmt > 0 && spent > budgetAmt;
+        const barColor = overBudget ? 'var(--danger)' : cat.color;
 
-      const deleteBtn = cat.isDefault
-        ? ''
-        : `<button class="delete" onclick="window._deleteCat('${cat.id}')" title="Delete category">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          </button>`;
+        const budgetInfo = budgetAmt > 0
+          ? `<div class="category-progress"><div class="category-progress-bar animate-bar" style="width:${pct}%;background:${barColor}"></div></div>
+             <div class="category-spend-info">
+               <span>${formatCurrency(spent)} of ${formatCurrency(budgetAmt)}</span>
+               ${overBudget ? `<span class="over-budget">Over by ${formatCurrency(spent - budgetAmt)}</span>` : `<span>${(100 - pct).toFixed(0)}% remaining</span>`}
+             </div>`
+          : `<div class="category-spend-info"><span>Spent: ${formatCurrency(spent)}</span><span>No budget set</span></div>`;
 
-      return `<div class="category-card" data-cat-id="${cat.id}">
-        <div class="category-card-header">
-          <div class="category-card-order">
-            <button onclick="window._moveCat('${cat.id}','up')" title="Move up">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
-            </button>
-            <button onclick="window._moveCat('${cat.id}','down')" title="Move down">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
+        const deleteBtn = cat.isDefault
+          ? ''
+          : `<button class="delete" onclick="window._deleteCat('${cat.id}')" title="Delete category">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>`;
+
+        return `<div class="category-card" data-cat-id="${cat.id}">
+          <div class="category-card-header">
+            <div class="category-card-order">
+              <button onclick="window._moveCat('${cat.id}','up')" title="Move up">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+              </button>
+              <button onclick="window._moveCat('${cat.id}','down')" title="Move down">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
+            <span class="category-color-dot" style="background:${cat.color}"></span>
+            <span class="category-card-name">${escapeHtml(cat.name)}</span>
+            <div class="category-card-actions">
+              <button onclick="window._editCat('${cat.id}')" title="Edit category">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </button>
+              ${deleteBtn}
+            </div>
           </div>
-          <span class="category-color-dot" style="background:${cat.color}"></span>
-          <span class="category-card-name">${escapeHtml(cat.name)}</span>
-          <div class="category-card-actions">
-            <button onclick="window._editCat('${cat.id}')" title="Edit category">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </button>
-            ${deleteBtn}
-          </div>
-        </div>
-        ${budgetInfo}
-      </div>`;
-    }).join('');
+          ${(cat.type || 'expense') === 'expense' ? budgetInfo : '<div class="category-spend-info"><span>Income category</span></div>'}
+        </div>`;
+      }).join('');
+    }
 
-    container.innerHTML = cards;
+    let html = '';
+    if (expenseCats.length > 0) {
+      html += `<div class="category-section-title">Expense Categories</div><div class="category-grid">${renderCatCards(expenseCats)}</div>`;
+    }
+    if (incomeCats.length > 0) {
+      html += `<div class="category-section-title">Income Categories</div><div class="category-grid">${renderCatCards(incomeCats)}</div>`;
+    }
+    container.innerHTML = html;
   }
 
-  // Category modal
   function openCategoryModal(editCat) {
     const modal = document.getElementById('modal-category');
     const form = document.getElementById('cat-form');
@@ -2616,10 +3247,12 @@ input:focus, select:focus, textarea:focus {
       document.getElementById('cat-edit-id').value = editCat.id;
       document.getElementById('cat-name').value = editCat.name;
       document.getElementById('cat-color').value = editCat.color;
+      document.getElementById('cat-type').value = editCat.type || 'expense';
     } else {
       document.getElementById('cat-modal-title').textContent = 'Add Category';
       document.getElementById('cat-submit-btn').textContent = 'Add Category';
       document.getElementById('cat-color').value = '#10b981';
+      document.getElementById('cat-type').value = 'expense';
     }
 
     modal.classList.add('open');
@@ -2642,6 +3275,7 @@ input:focus, select:focus, textarea:focus {
     const editId = document.getElementById('cat-edit-id').value;
     const name = document.getElementById('cat-name').value.trim();
     const color = document.getElementById('cat-color').value;
+    const type = document.getElementById('cat-type').value;
 
     if (!name) {
       showToast('Please enter a category name');
@@ -2654,6 +3288,7 @@ input:focus, select:focus, textarea:focus {
       if (existing) {
         existing.name = name;
         existing.color = color;
+        existing.type = type;
         await dbPut('categories', existing);
       }
     } else {
@@ -2662,6 +3297,7 @@ input:focus, select:focus, textarea:focus {
         id: generateId(),
         name,
         color,
+        type,
         icon: 'tag',
         isDefault: false,
         order: cats.length
@@ -2696,7 +3332,6 @@ input:focus, select:focus, textarea:focus {
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= cats.length) return;
 
-    // Swap order values
     const tempOrder = cats[idx].order;
     cats[idx].order = cats[swapIdx].order;
     cats[swapIdx].order = tempOrder;
@@ -2713,6 +3348,7 @@ input:focus, select:focus, textarea:focus {
     document.getElementById('budget-month-label').textContent = getMonthLabel(budgetMonth);
 
     const cats = await getCategoriesList();
+    const expenseCats = cats.filter(c => (c.type || 'expense') === 'expense');
     const budgets = await dbGetAll('budgets');
     const transactions = await dbGetAll('transactions');
     const monthTxns = transactions.filter(t => t.date.startsWith(budgetMonth) && t.type === 'expense');
@@ -2720,12 +3356,12 @@ input:focus, select:focus, textarea:focus {
     let totalBudget = 0;
     let totalSpent = 0;
 
-    const rows = cats.map(cat => {
+    const rows = expenseCats.map(cat => {
       const spent = monthTxns.filter(t => t.category === cat.id).reduce((s, t) => s + t.amount, 0);
       const budget = budgets.find(b => b.categoryId === cat.id && b.month === budgetMonth);
       const budgetAmt = budget ? budget.amount : 0;
       totalBudget += budgetAmt;
-      totalSpent += spent;
+      if (budgetAmt > 0) totalSpent += spent;
 
       const pct = budgetAmt > 0 ? Math.min((spent / budgetAmt) * 100, 100) : 0;
       const overBudget = budgetAmt > 0 && spent > budgetAmt;
@@ -2750,7 +3386,7 @@ input:focus, select:focus, textarea:focus {
 
     document.getElementById('budget-list').innerHTML = rows;
 
-    // Utilization
+    // Utilization: spent across budgeted categories / total budget
     const utilPct = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
     const utilEl = document.getElementById('budget-util-pct');
     utilEl.textContent = Math.round(utilPct) + '%';
@@ -2822,20 +3458,667 @@ input:focus, select:focus, textarea:focus {
   });
 
   // ============================================
+  // BILL TRACKER
+  // ============================================
+  async function refreshBills() {
+    const bills = await dbGetAll('bills');
+    const billPayments = await dbGetAll('billPayments');
+    const catMap = await getCategoriesMap();
+    const currentMonth = getCurrentMonth();
+    const today = new Date();
+    const todayDay = today.getDate();
+
+    // Stats
+    const totalMonthly = bills.reduce((s, b) => s + (b.frequency === 'monthly' ? b.amount : b.frequency === 'yearly' ? b.amount / 12 : b.amount * 4.33), 0);
+    let paidCount = 0;
+    let unpaidCount = 0;
+    let nextDue = null;
+
+    bills.forEach(bill => {
+      const payment = billPayments.find(p => p.billId === bill.id && p.month === currentMonth);
+      if (payment && payment.paid) paidCount++;
+      else {
+        unpaidCount++;
+        if (!nextDue || bill.dueDay < nextDue.dueDay) nextDue = bill;
+      }
+    });
+
+    const paidTotal = bills.filter(bill => {
+      const payment = billPayments.find(p => p.billId === bill.id && p.month === currentMonth);
+      return payment && payment.paid;
+    }).reduce((s, b) => s + b.amount, 0);
+
+    const remainingTotal = totalMonthly - paidTotal;
+
+    document.getElementById('bills-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4"/></svg></div><div><div class="stat-card-label">Total Monthly Bills</div><div class="stat-card-value">${formatCurrency(totalMonthly)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon income"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><div><div class="stat-card-label">Paid This Month</div><div class="stat-card-value">${formatCurrency(paidTotal)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon warning"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div><div class="stat-card-label">Remaining</div><div class="stat-card-value">${formatCurrency(remainingTotal > 0 ? remainingTotal : 0)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon net"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div><div><div class="stat-card-label">Next Due</div><div class="stat-card-value" style="font-size:1rem;">${nextDue ? escapeHtml(nextDue.name) + ' (Day ' + nextDue.dueDay + ')' : 'All paid!'}</div></div></div>`;
+
+    // Calendar
+    renderBillCalendar(bills, billPayments, catMap);
+
+    // Bill list
+    const container = document.getElementById('bill-list');
+    if (bills.length === 0) {
+      container.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><h4>No bills yet</h4><p>Click "Add Bill" to track your first bill</p></div>`;
+      return;
+    }
+
+    const items = bills.sort((a, b) => a.dueDay - b.dueDay).map(bill => {
+      const cat = catMap[bill.categoryId];
+      const catColor = cat ? cat.color : '#9ca3af';
+      const payment = billPayments.find(p => p.billId === bill.id && p.month === currentMonth);
+      const isPaid = payment && payment.paid;
+      const autoPayBadge = bill.autoPay === 'yes' ? '<span class="badge badge-autopay">Auto-pay</span>' : '';
+      const paidBadge = isPaid ? '<span class="badge badge-paid">Paid</span>' : '<span class="badge badge-unpaid">Unpaid</span>';
+      const markBtn = isPaid
+        ? `<button class="btn btn-secondary btn-mark-paid" onclick="window._toggleBillPaid('${bill.id}',false)">Mark Unpaid</button>`
+        : `<button class="btn btn-primary btn-mark-paid" onclick="window._toggleBillPaid('${bill.id}',true)">Mark Paid</button>`;
+
+      return `<div class="bill-card">
+        <span class="transaction-cat-dot" style="background:${catColor}"></span>
+        <div class="bill-card-info">
+          <div class="bill-card-name">${escapeHtml(bill.name)} ${autoPayBadge} ${paidBadge}</div>
+          <div class="bill-card-meta">Due: Day ${bill.dueDay} &middot; ${bill.frequency}${bill.notes ? ' &middot; ' + escapeHtml(bill.notes) : ''}</div>
+        </div>
+        <div class="bill-card-amount">${formatCurrency(bill.amount)}</div>
+        ${markBtn}
+        <div class="bill-card-actions">
+          <button onclick="window._editBill('${bill.id}')" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+          <button class="delete" onclick="window._deleteBill('${bill.id}')" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+        </div>
+      </div>`;
+    }).join('');
+
+    container.innerHTML = items;
+  }
+
+  function renderBillCalendar(bills, billPayments, catMap) {
+    const container = document.getElementById('bill-calendar');
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfWeek = new Date(year, month, 1).getDay();
+    const currentMonth = getCurrentMonth();
+
+    const headers = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="bill-cal-header">${d}</div>`).join('');
+
+    let days = '';
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      days += '<div class="bill-cal-day empty"></div>';
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayBills = bills.filter(b => b.dueDay === d);
+      const hasBill = dayBills.length > 0;
+      const dots = dayBills.map(b => {
+        const cat = catMap[b.categoryId];
+        return `<span style="background:${cat ? cat.color : '#9ca3af'}"></span>`;
+      }).join('');
+      days += `<div class="bill-cal-day${hasBill ? ' has-bill' : ''}">${d}${hasBill ? `<div class="bill-cal-dots">${dots}</div>` : ''}</div>`;
+    }
+
+    container.innerHTML = headers + days;
+  }
+
+  function openBillModal(editBill) {
+    const modal = document.getElementById('modal-bill');
+    const form = document.getElementById('bill-form');
+    form.reset();
+    document.getElementById('bill-edit-id').value = '';
+
+    if (editBill) {
+      document.getElementById('bill-modal-title').textContent = 'Edit Bill';
+      document.getElementById('bill-submit-btn').textContent = 'Save Changes';
+      document.getElementById('bill-edit-id').value = editBill.id;
+      document.getElementById('bill-name').value = editBill.name;
+      document.getElementById('bill-amount').value = editBill.amount;
+      document.getElementById('bill-due-day').value = editBill.dueDay;
+      document.getElementById('bill-frequency').value = editBill.frequency;
+      document.getElementById('bill-autopay').value = editBill.autoPay || 'no';
+      document.getElementById('bill-notes').value = editBill.notes || '';
+    } else {
+      document.getElementById('bill-modal-title').textContent = 'Add Bill';
+      document.getElementById('bill-submit-btn').textContent = 'Add Bill';
+    }
+
+    populateExpenseCategorySelect('bill-category').then(() => {
+      if (editBill) document.getElementById('bill-category').value = editBill.categoryId || '';
+    });
+    modal.classList.add('open');
+  }
+
+  document.getElementById('btn-add-bill').addEventListener('click', () => openBillModal());
+  document.getElementById('bill-modal-close').addEventListener('click', () => document.getElementById('modal-bill').classList.remove('open'));
+  document.getElementById('modal-bill').addEventListener('click', (e) => { if (e.target.id === 'modal-bill') document.getElementById('modal-bill').classList.remove('open'); });
+
+  document.getElementById('bill-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('bill-edit-id').value;
+    const name = document.getElementById('bill-name').value.trim();
+    const amount = parseFloat(document.getElementById('bill-amount').value);
+    const dueDay = parseInt(document.getElementById('bill-due-day').value);
+    const frequency = document.getElementById('bill-frequency').value;
+    const categoryId = document.getElementById('bill-category').value;
+    const autoPay = document.getElementById('bill-autopay').value;
+    const notes = document.getElementById('bill-notes').value.trim();
+
+    if (!name || !amount || !dueDay) { showToast('Please fill in all required fields'); return; }
+
+    const billData = {
+      id: editId || generateId(),
+      name, amount, dueDay, frequency, categoryId, autoPay, notes,
+      createdAt: editId ? undefined : Date.now()
+    };
+
+    if (editId) {
+      const all = await dbGetAll('bills');
+      const existing = all.find(b => b.id === editId);
+      if (existing) billData.createdAt = existing.createdAt;
+    }
+
+    await dbPut('bills', billData);
+    document.getElementById('modal-bill').classList.remove('open');
+    showToast(editId ? 'Bill updated' : 'Bill added');
+    refreshBills();
+  });
+
+  window._editBill = async function(id) {
+    const all = await dbGetAll('bills');
+    const bill = all.find(b => b.id === id);
+    if (bill) openBillModal(bill);
+  };
+
+  window._deleteBill = async function(id) {
+    const ok = await showConfirm('Delete Bill', 'Are you sure you want to delete this bill?');
+    if (ok) {
+      await dbDelete('bills', id);
+      showToast('Bill deleted');
+      refreshBills();
+    }
+  };
+
+  window._toggleBillPaid = async function(billId, paid) {
+    const billPayments = await dbGetAll('billPayments');
+    const currentMonth = getCurrentMonth();
+    const existing = billPayments.find(p => p.billId === billId && p.month === currentMonth);
+
+    const paymentData = {
+      id: existing ? existing.id : generateId(),
+      billId,
+      month: currentMonth,
+      paid,
+      paidDate: paid ? new Date().toISOString().slice(0, 10) : null
+    };
+
+    await dbPut('billPayments', paymentData);
+    showToast(paid ? 'Bill marked as paid' : 'Bill marked as unpaid');
+    refreshBills();
+  };
+
+  // ============================================
+  // SAVINGS GOALS
+  // ============================================
+  async function refreshSavings() {
+    const goals = await dbGetAll('savingsGoals');
+    const deposits = await dbGetAll('savingsDeposits');
+
+    // Stats
+    let totalSaved = 0;
+    let goalsInProgress = 0;
+    let goalsCompleted = 0;
+    const allDepositAmounts = deposits.map(d => d.amount);
+    totalSaved = deposits.reduce((s, d) => s + d.amount, 0);
+
+    goals.forEach(goal => {
+      const goalDeposits = deposits.filter(d => d.goalId === goal.id);
+      const saved = goalDeposits.reduce((s, d) => s + d.amount, 0);
+      if (saved >= goal.targetAmount) goalsCompleted++;
+      else goalsInProgress++;
+    });
+
+    // Average monthly savings (based on deposits in last 6 months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const recentDeposits = deposits.filter(d => new Date(d.date) >= sixMonthsAgo);
+    const avgMonthlySavings = recentDeposits.length > 0 ? recentDeposits.reduce((s, d) => s + d.amount, 0) / 6 : 0;
+
+    document.getElementById('savings-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-card-icon income"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/></svg></div><div><div class="stat-card-label">Total Saved</div><div class="stat-card-value">${formatCurrency(totalSaved)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon emerald"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><div><div class="stat-card-label">Goals in Progress</div><div class="stat-card-value">${goalsInProgress}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon income"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><div><div class="stat-card-label">Goals Completed</div><div class="stat-card-value">${goalsCompleted}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon net"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6m6 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0h6"/></svg></div><div><div class="stat-card-label">Avg Monthly Savings</div><div class="stat-card-value">${formatCurrency(avgMonthlySavings)}</div></div></div>`;
+
+    // Goal list
+    const container = document.getElementById('goal-list');
+    if (goals.length === 0) {
+      container.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/></svg><h4>No savings goals yet</h4><p>Click "New Goal" to start saving toward something</p></div>`;
+      return;
+    }
+
+    const cards = goals.map(goal => {
+      const goalDeposits = deposits.filter(d => d.goalId === goal.id).sort((a, b) => b.date.localeCompare(a.date));
+      const saved = goalDeposits.reduce((s, d) => s + d.amount, 0);
+      const pct = Math.min((saved / goal.targetAmount) * 100, 100);
+      const isComplete = saved >= goal.targetAmount;
+
+      // Estimated completion
+      let estCompletion = '';
+      if (!isComplete && avgMonthlySavings > 0) {
+        const remaining = goal.targetAmount - saved;
+        const months = Math.ceil(remaining / avgMonthlySavings);
+        const estDate = new Date();
+        estDate.setMonth(estDate.getMonth() + months);
+        estCompletion = `Est. completion: ${estDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
+      }
+
+      const depositsHtml = goalDeposits.length > 0
+        ? `<div class="goal-deposits">
+            <button class="goal-deposits-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">Show ${goalDeposits.length} deposit${goalDeposits.length > 1 ? 's' : ''}</button>
+            <div style="display:none">${goalDeposits.map(d => `<div class="goal-deposit-item"><span>${formatDate(d.date)}${d.note ? ' - ' + escapeHtml(d.note) : ''}</span><span style="color:var(--success);font-weight:600;">+${formatCurrency(d.amount)}</span></div>`).join('')}</div>
+          </div>`
+        : '';
+
+      return `<div class="goal-card">
+        <div class="goal-card-header">
+          <div class="goal-card-icon">${goal.icon || '\u{1F4B0}'}</div>
+          <div style="flex:1;">
+            <div class="goal-card-title">${escapeHtml(goal.name)}</div>
+            <div class="goal-card-target">Target: ${formatCurrency(goal.targetAmount)}${goal.targetDate ? ' by ' + formatDate(goal.targetDate) : ''}</div>
+          </div>
+          <div class="goal-card-actions">
+            <button onclick="window._editGoal('${goal.id}')" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+            <button class="delete" onclick="window._deleteGoal('${goal.id}')" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+          </div>
+        </div>
+        <div class="goal-progress">
+          <div class="goal-progress-bar"><div class="goal-progress-fill animate-bar" style="width:${pct}%;${isComplete ? 'background:var(--success);' : ''}"></div></div>
+          <div class="goal-progress-info">
+            <span>${formatCurrency(saved)} saved (${Math.round(pct)}%)</span>
+            <span>${isComplete ? 'Goal reached!' : estCompletion}</span>
+          </div>
+        </div>
+        ${depositsHtml}
+      </div>`;
+    }).join('');
+
+    container.innerHTML = cards;
+  }
+
+  function openGoalModal(editGoal) {
+    const modal = document.getElementById('modal-goal');
+    const form = document.getElementById('goal-form');
+    form.reset();
+    document.getElementById('goal-edit-id').value = '';
+    selectedGoalIcon = '\u{1F4B0}';
+
+    document.querySelectorAll('#goal-icon-picker .icon-picker-item').forEach(el => el.classList.remove('selected'));
+    document.querySelector('#goal-icon-picker .icon-picker-item').classList.add('selected');
+
+    if (editGoal) {
+      document.getElementById('goal-modal-title').textContent = 'Edit Goal';
+      document.getElementById('goal-submit-btn').textContent = 'Save Changes';
+      document.getElementById('goal-edit-id').value = editGoal.id;
+      document.getElementById('goal-name').value = editGoal.name;
+      document.getElementById('goal-target').value = editGoal.targetAmount;
+      document.getElementById('goal-date').value = editGoal.targetDate || '';
+      selectedGoalIcon = editGoal.icon || '\u{1F4B0}';
+      document.querySelectorAll('#goal-icon-picker .icon-picker-item').forEach(el => {
+        el.classList.toggle('selected', el.dataset.icon === selectedGoalIcon);
+      });
+    } else {
+      document.getElementById('goal-modal-title').textContent = 'Add Savings Goal';
+      document.getElementById('goal-submit-btn').textContent = 'Create Goal';
+    }
+
+    modal.classList.add('open');
+  }
+
+  document.querySelectorAll('#goal-icon-picker .icon-picker-item').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('#goal-icon-picker .icon-picker-item').forEach(i => i.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedGoalIcon = el.dataset.icon;
+    });
+  });
+
+  document.getElementById('btn-add-goal').addEventListener('click', () => openGoalModal());
+  document.getElementById('goal-modal-close').addEventListener('click', () => document.getElementById('modal-goal').classList.remove('open'));
+  document.getElementById('modal-goal').addEventListener('click', (e) => { if (e.target.id === 'modal-goal') document.getElementById('modal-goal').classList.remove('open'); });
+
+  document.getElementById('goal-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('goal-edit-id').value;
+    const name = document.getElementById('goal-name').value.trim();
+    const targetAmount = parseFloat(document.getElementById('goal-target').value);
+    const targetDate = document.getElementById('goal-date').value || null;
+
+    if (!name || !targetAmount) { showToast('Please fill in all required fields'); return; }
+
+    const goalData = {
+      id: editId || generateId(),
+      name, targetAmount, targetDate, icon: selectedGoalIcon,
+      createdAt: editId ? undefined : Date.now()
+    };
+
+    if (editId) {
+      const all = await dbGetAll('savingsGoals');
+      const existing = all.find(g => g.id === editId);
+      if (existing) goalData.createdAt = existing.createdAt;
+    }
+
+    await dbPut('savingsGoals', goalData);
+    document.getElementById('modal-goal').classList.remove('open');
+    showToast(editId ? 'Goal updated' : 'Goal created');
+    refreshSavings();
+  });
+
+  window._editGoal = async function(id) {
+    const all = await dbGetAll('savingsGoals');
+    const goal = all.find(g => g.id === id);
+    if (goal) openGoalModal(goal);
+  };
+
+  window._deleteGoal = async function(id) {
+    const ok = await showConfirm('Delete Goal', 'This will also delete all deposits for this goal. Are you sure?');
+    if (ok) {
+      await dbDelete('savingsGoals', id);
+      const deposits = await dbGetAll('savingsDeposits');
+      for (const d of deposits.filter(d => d.goalId === id)) {
+        await dbDelete('savingsDeposits', d.id);
+      }
+      showToast('Goal deleted');
+      refreshSavings();
+    }
+  };
+
+  // Deposit modal
+  function openDepositModal() {
+    const modal = document.getElementById('modal-deposit');
+    document.getElementById('deposit-form').reset();
+    document.getElementById('deposit-date').value = new Date().toISOString().slice(0, 10);
+    populateGoalSelect();
+    modal.classList.add('open');
+  }
+
+  async function populateGoalSelect() {
+    const goals = await dbGetAll('savingsGoals');
+    const select = document.getElementById('deposit-goal');
+    select.innerHTML = '<option value="">Select goal</option>';
+    goals.forEach(g => {
+      const opt = document.createElement('option');
+      opt.value = g.id;
+      opt.textContent = g.name;
+      select.appendChild(opt);
+    });
+  }
+
+  document.getElementById('btn-add-deposit-top').addEventListener('click', () => openDepositModal());
+  document.getElementById('deposit-modal-close').addEventListener('click', () => document.getElementById('modal-deposit').classList.remove('open'));
+  document.getElementById('modal-deposit').addEventListener('click', (e) => { if (e.target.id === 'modal-deposit') document.getElementById('modal-deposit').classList.remove('open'); });
+
+  document.getElementById('deposit-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const goalId = document.getElementById('deposit-goal').value;
+    const amount = parseFloat(document.getElementById('deposit-amount').value);
+    const date = document.getElementById('deposit-date').value;
+    const note = document.getElementById('deposit-note').value.trim();
+
+    if (!goalId || !amount || !date) { showToast('Please fill in all required fields'); return; }
+
+    await dbPut('savingsDeposits', {
+      id: generateId(), goalId, amount, date, note, createdAt: Date.now()
+    });
+
+    document.getElementById('modal-deposit').classList.remove('open');
+    showToast('Deposit added');
+    refreshSavings();
+  });
+
+  // ============================================
+  // DEBT PAYOFF
+  // ============================================
+  async function refreshDebt() {
+    const debts = await dbGetAll('debts');
+    const payments = await dbGetAll('debtPayments');
+
+    // Stats
+    const totalDebt = debts.reduce((s, d) => s + d.balance, 0);
+    const totalMinPayments = debts.reduce((s, d) => s + d.minimumPayment, 0);
+    const highestRate = debts.length > 0 ? Math.max(...debts.map(d => d.interestRate)) : 0;
+
+    document.getElementById('debt-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></div><div><div class="stat-card-label">Total Debt</div><div class="stat-card-value">${formatCurrency(totalDebt)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon warning"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4"/></svg></div><div><div class="stat-card-label">Total Min Payments</div><div class="stat-card-value">${formatCurrency(totalMinPayments)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><div><div class="stat-card-label">Highest Interest</div><div class="stat-card-value">${highestRate.toFixed(1)}%</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon net"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div><div><div class="stat-card-label">Number of Debts</div><div class="stat-card-value">${debts.length}</div></div></div>`;
+
+    // Sort by strategy
+    const sorted = [...debts];
+    if (debtStrategy === 'snowball') sorted.sort((a, b) => a.balance - b.balance);
+    else sorted.sort((a, b) => b.interestRate - a.interestRate);
+
+    const container = document.getElementById('debt-list');
+    if (debts.length === 0) {
+      container.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg><h4>No debts tracked</h4><p>Click "Add Debt" to start tracking your path to debt freedom</p></div>`;
+      return;
+    }
+
+    const cards = sorted.map((debt, idx) => {
+      const debtPayments = payments.filter(p => p.debtId === debt.id).sort((a, b) => b.date.localeCompare(a.date));
+      // Estimate months to payoff at minimum payment
+      let estMonths = '---';
+      if (debt.minimumPayment > 0 && debt.balance > 0) {
+        const monthlyRate = debt.interestRate / 100 / 12;
+        if (monthlyRate > 0) {
+          if (debt.minimumPayment <= debt.balance * monthlyRate) {
+            estMonths = 'Never (payment too low)';
+          } else {
+            const months = Math.ceil(-Math.log(1 - (debt.balance * monthlyRate / debt.minimumPayment)) / Math.log(1 + monthlyRate));
+            estMonths = months + ' months';
+          }
+        } else {
+          estMonths = Math.ceil(debt.balance / debt.minimumPayment) + ' months';
+        }
+      }
+
+      const paymentsHtml = debtPayments.length > 0
+        ? `<div class="debt-payments">
+            <button class="goal-deposits-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">Show ${debtPayments.length} payment${debtPayments.length > 1 ? 's' : ''}</button>
+            <div style="display:none">${debtPayments.map(p => `<div class="debt-payment-item"><span>${formatDate(p.date)}${p.note ? ' - ' + escapeHtml(p.note) : ''}</span><span style="color:var(--success);font-weight:600;">-${formatCurrency(p.amount)}</span></div>`).join('')}</div>
+          </div>`
+        : '';
+
+      return `<div class="debt-card">
+        <div class="debt-card-header">
+          <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-right:4px;">#${idx + 1}</span>
+          <span class="badge badge-type">${escapeHtml(debt.type)}</span>
+          <span class="debt-card-name">${escapeHtml(debt.name)}</span>
+          <span class="debt-card-balance">${formatCurrency(debt.balance)}</span>
+          <div class="debt-card-actions">
+            <button onclick="window._editDebt('${debt.id}')" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+            <button class="delete" onclick="window._deleteDebt('${debt.id}')" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+          </div>
+        </div>
+        <div class="debt-card-details">
+          <div class="debt-detail-item">Interest Rate<strong>${debt.interestRate}%</strong></div>
+          <div class="debt-detail-item">Min Payment<strong>${formatCurrency(debt.minimumPayment)}</strong></div>
+          <div class="debt-detail-item">Est. Payoff<strong>${estMonths}</strong></div>
+        </div>
+        ${paymentsHtml}
+      </div>`;
+    }).join('');
+
+    container.innerHTML = cards;
+  }
+
+  // Strategy toggle
+  document.querySelectorAll('#debt-strategy-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      debtStrategy = btn.dataset.strategy;
+      document.querySelectorAll('#debt-strategy-toggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('debt-strategy-desc').textContent =
+        debtStrategy === 'snowball'
+          ? 'Pay minimums on everything, throw extra money at the smallest balance. Quick wins build momentum.'
+          : 'Pay minimums on everything, throw extra money at the highest interest rate. Saves the most money over time.';
+      refreshDebt();
+    });
+  });
+
+  // Debt modal
+  function openDebtModal(editDebt) {
+    const modal = document.getElementById('modal-debt');
+    const form = document.getElementById('debt-form');
+    form.reset();
+    document.getElementById('debt-edit-id').value = '';
+
+    if (editDebt) {
+      document.getElementById('debt-modal-title').textContent = 'Edit Debt';
+      document.getElementById('debt-submit-btn').textContent = 'Save Changes';
+      document.getElementById('debt-edit-id').value = editDebt.id;
+      document.getElementById('debt-name').value = editDebt.name;
+      document.getElementById('debt-balance').value = editDebt.balance;
+      document.getElementById('debt-rate').value = editDebt.interestRate;
+      document.getElementById('debt-min-payment').value = editDebt.minimumPayment;
+      document.getElementById('debt-type').value = editDebt.type;
+    } else {
+      document.getElementById('debt-modal-title').textContent = 'Add Debt';
+      document.getElementById('debt-submit-btn').textContent = 'Add Debt';
+    }
+
+    modal.classList.add('open');
+  }
+
+  document.getElementById('btn-add-debt').addEventListener('click', () => openDebtModal());
+  document.getElementById('debt-modal-close').addEventListener('click', () => document.getElementById('modal-debt').classList.remove('open'));
+  document.getElementById('modal-debt').addEventListener('click', (e) => { if (e.target.id === 'modal-debt') document.getElementById('modal-debt').classList.remove('open'); });
+
+  document.getElementById('debt-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('debt-edit-id').value;
+    const name = document.getElementById('debt-name').value.trim();
+    const balance = parseFloat(document.getElementById('debt-balance').value);
+    const interestRate = parseFloat(document.getElementById('debt-rate').value);
+    const minimumPayment = parseFloat(document.getElementById('debt-min-payment').value);
+    const type = document.getElementById('debt-type').value;
+
+    if (!name || isNaN(balance) || isNaN(interestRate) || isNaN(minimumPayment)) {
+      showToast('Please fill in all required fields'); return;
+    }
+
+    const debtData = {
+      id: editId || generateId(),
+      name, balance, interestRate, minimumPayment, type,
+      createdAt: editId ? undefined : Date.now()
+    };
+
+    if (editId) {
+      const all = await dbGetAll('debts');
+      const existing = all.find(d => d.id === editId);
+      if (existing) debtData.createdAt = existing.createdAt;
+    }
+
+    await dbPut('debts', debtData);
+    document.getElementById('modal-debt').classList.remove('open');
+    showToast(editId ? 'Debt updated' : 'Debt added');
+    refreshDebt();
+  });
+
+  window._editDebt = async function(id) {
+    const all = await dbGetAll('debts');
+    const debt = all.find(d => d.id === id);
+    if (debt) openDebtModal(debt);
+  };
+
+  window._deleteDebt = async function(id) {
+    const ok = await showConfirm('Delete Debt', 'This will also delete all payments for this debt. Are you sure?');
+    if (ok) {
+      await dbDelete('debts', id);
+      const payments = await dbGetAll('debtPayments');
+      for (const p of payments.filter(p => p.debtId === id)) {
+        await dbDelete('debtPayments', p.id);
+      }
+      showToast('Debt deleted');
+      refreshDebt();
+    }
+  };
+
+  // Debt payment modal
+  function openDebtPaymentModal() {
+    const modal = document.getElementById('modal-debt-payment');
+    document.getElementById('debt-payment-form').reset();
+    document.getElementById('debt-payment-date').value = new Date().toISOString().slice(0, 10);
+    populateDebtSelect();
+    modal.classList.add('open');
+  }
+
+  async function populateDebtSelect() {
+    const debts = await dbGetAll('debts');
+    const select = document.getElementById('debt-payment-debt');
+    select.innerHTML = '<option value="">Select debt</option>';
+    debts.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = d.name + ' (' + formatCurrency(d.balance) + ')';
+      select.appendChild(opt);
+    });
+  }
+
+  document.getElementById('btn-add-debt-payment-top').addEventListener('click', () => openDebtPaymentModal());
+  document.getElementById('debt-payment-modal-close').addEventListener('click', () => document.getElementById('modal-debt-payment').classList.remove('open'));
+  document.getElementById('modal-debt-payment').addEventListener('click', (e) => { if (e.target.id === 'modal-debt-payment') document.getElementById('modal-debt-payment').classList.remove('open'); });
+
+  document.getElementById('debt-payment-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const debtId = document.getElementById('debt-payment-debt').value;
+    const amount = parseFloat(document.getElementById('debt-payment-amount').value);
+    const date = document.getElementById('debt-payment-date').value;
+    const note = document.getElementById('debt-payment-note').value.trim();
+
+    if (!debtId || !amount || !date) { showToast('Please fill in all required fields'); return; }
+
+    await dbPut('debtPayments', {
+      id: generateId(), debtId, amount, date, note, createdAt: Date.now()
+    });
+
+    // Reduce debt balance
+    const debts = await dbGetAll('debts');
+    const debt = debts.find(d => d.id === debtId);
+    if (debt) {
+      debt.balance = Math.max(0, debt.balance - amount);
+      await dbPut('debts', debt);
+    }
+
+    document.getElementById('modal-debt-payment').classList.remove('open');
+    showToast('Payment recorded');
+    refreshDebt();
+  });
+
+  // ============================================
   // EXPORT / IMPORT
   // ============================================
   document.getElementById('btn-export').addEventListener('click', async () => {
     const transactions = await dbGetAll('transactions');
     const categories = await dbGetAll('categories');
     const budgets = await dbGetAll('budgets');
+    const bills = await dbGetAll('bills');
+    const billPayments = await dbGetAll('billPayments');
+    const savingsGoals = await dbGetAll('savingsGoals');
+    const savingsDeposits = await dbGetAll('savingsDeposits');
+    const debts = await dbGetAll('debts');
+    const debtPayments = await dbGetAll('debtPayments');
 
     const data = {
       appName: 'BudgetTracker',
-      version: 1,
+      version: 2,
       exportDate: new Date().toISOString(),
-      transactions,
-      categories,
-      budgets
+      transactions, categories, budgets,
+      bills, billPayments,
+      savingsGoals, savingsDeposits,
+      debts, debtPayments
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -2868,19 +4151,20 @@ input:focus, select:focus, textarea:focus {
       const ok = await showConfirm('Import Data', 'This will replace all current data. Are you sure?');
       if (!ok) return;
 
-      await dbClear('transactions');
-      await dbClear('categories');
-      await dbClear('budgets');
+      const stores = ['transactions','categories','budgets','bills','billPayments','savingsGoals','savingsDeposits','debts','debtPayments'];
+      for (const store of stores) {
+        if (db.objectStoreNames.contains(store)) await dbClear(store);
+      }
 
-      if (data.transactions) {
-        for (const t of data.transactions) await dbPut('transactions', t);
-      }
-      if (data.categories) {
-        for (const c of data.categories) await dbPut('categories', c);
-      }
-      if (data.budgets) {
-        for (const b of data.budgets) await dbPut('budgets', b);
-      }
+      if (data.transactions) for (const t of data.transactions) await dbPut('transactions', t);
+      if (data.categories) for (const c of data.categories) await dbPut('categories', c);
+      if (data.budgets) for (const b of data.budgets) await dbPut('budgets', b);
+      if (data.bills) for (const b of data.bills) await dbPut('bills', b);
+      if (data.billPayments) for (const p of data.billPayments) await dbPut('billPayments', p);
+      if (data.savingsGoals) for (const g of data.savingsGoals) await dbPut('savingsGoals', g);
+      if (data.savingsDeposits) for (const d of data.savingsDeposits) await dbPut('savingsDeposits', d);
+      if (data.debts) for (const d of data.debts) await dbPut('debts', d);
+      if (data.debtPayments) for (const p of data.debtPayments) await dbPut('debtPayments', p);
 
       showToast('Data imported successfully');
       navigateTo(currentPage);
@@ -2888,7 +4172,6 @@ input:focus, select:focus, textarea:focus {
       showToast('Error importing data: ' + err.message);
     }
 
-    // Reset input
     e.target.value = '';
   });
 
