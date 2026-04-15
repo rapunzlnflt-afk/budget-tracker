@@ -5093,6 +5093,7 @@ input:focus, select:focus, textarea:focus {
     const snapshots = await dbGetAll('netWorthSnapshots');
     const savingsGoals = await dbGetAll('savingsGoals');
     const savingsDeposits = await dbGetAll('savingsDeposits');
+    const allTransactions = await dbGetAll('transactions');
 
     // Compute actual saved amount per goal from deposits
     const goalSavedMap = {};
@@ -5100,9 +5101,14 @@ input:focus, select:focus, textarea:focus {
       goalSavedMap[d.goalId] = (goalSavedMap[d.goalId] || 0) + d.amount;
     });
 
+    // Compute net balance from all transactions (income - expenses)
+    const totalIncome = allTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const totalExpenses = allTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    const netBalance = totalIncome - totalExpenses;
+
     const manualAssetTotal = assets.reduce((s, a) => s + (a.value || 0), 0);
     const savingsTotal = Object.values(goalSavedMap).reduce((s, v) => s + v, 0);
-    const totalAssets = manualAssetTotal + savingsTotal;
+    const totalAssets = manualAssetTotal + savingsTotal + Math.max(netBalance, 0);
     const totalLiabilities = debts.reduce((s, d) => s + (d.balance || 0), 0);
     const netWorth = totalAssets - totalLiabilities;
 
@@ -5127,7 +5133,8 @@ input:focus, select:focus, textarea:focus {
 
     // B. Assets section
     const assetContainer = document.getElementById('nw-asset-list');
-    if (assets.length === 0 && savingsGoals.filter(g => (goalSavedMap[g.id] || 0) > 0).length === 0) {
+    const hasNetBalance = netBalance > 0;
+    if (assets.length === 0 && !hasNetBalance && savingsGoals.filter(g => (goalSavedMap[g.id] || 0) > 0).length === 0) {
       assetContainer.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg><h4>No assets added yet</h4><p>Add your accounts and property to track your net worth.</p></div>`;
     } else {
       const grouped = {};
@@ -5153,6 +5160,18 @@ input:focus, select:focus, textarea:focus {
             </div>
           </div>`;
         }
+      }
+      // Add net balance as auto-populated checking asset
+      if (hasNetBalance) {
+        html += `<div class="nw-asset-group-title">NET BALANCE</div>`;
+        html += `<div class="nw-asset-card">
+          <span class="nw-asset-badge checking">CHECKING</span>
+          <div class="nw-asset-info">
+            <div class="nw-asset-name">Net Balance</div>
+            <div class="nw-asset-note">Auto-calculated from <a href="#" onclick="navigateTo('dashboard');return false;" style="color:var(--emerald);text-decoration:underline;">Transactions</a> (income − expenses)</div>
+          </div>
+          <div class="nw-asset-value">${formatCurrency(netBalance)}</div>
+        </div>`;
       }
       // Add savings goals as auto-populated assets
       if (savingsGoals.length > 0) {
