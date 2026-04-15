@@ -1488,7 +1488,7 @@ input:focus, select:focus, textarea:focus {
 .debt-card.paid-off .debt-card-balance { color: var(--success); }
 .debt-progress { margin-bottom: 12px; }
 .debt-progress-bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; margin-bottom: 5px; }
-.debt-progress-fill { height: 100%; border-radius: 4px; background: var(--emerald); transition: width 0.8s ease; }
+.debt-progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--emerald) 0%, var(--emerald-dark) 100%); transition: width 0.8s ease; }
 .debt-progress-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); }
 .debt-card-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; padding: 10px; background: var(--bg-secondary); border-radius: var(--radius-sm); }
 .debt-detail-item { font-size: 0.75rem; color: var(--text-secondary); text-align: center; }
@@ -1512,8 +1512,10 @@ input:focus, select:focus, textarea:focus {
 
 .strategy-toggle { display: flex; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 16px; }
 .strategy-toggle button { flex: 1; padding: 10px 16px; font-weight: 600; font-size: 0.88rem; transition: all var(--transition); color: var(--text-secondary); background: var(--card-bg); }
-.strategy-toggle button.active { background: var(--emerald); color: #fff; }
+.strategy-toggle button.active { background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%); color: #fff; }
 .strategy-desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; padding: 12px; background: var(--bg-secondary); border-radius: var(--radius-sm); }
+#page-debt .btn-primary { background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%); }
+#page-debt .btn-primary:hover { background: linear-gradient(135deg, var(--emerald-dark) 0%, var(--emerald-dark) 100%); }
 
 /* Tip cards */
 .tip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 32px; }
