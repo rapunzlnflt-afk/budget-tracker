@@ -3650,11 +3650,13 @@ input:focus, select:focus, textarea:focus {
       const catColor = cat ? cat.color : '#9ca3af';
       const amountClass = t.type === 'income' ? 'income' : 'expense';
       const sign = t.type === 'income' ? '+' : '-';
-      const isAutoTxn = !!t.billId || !!t.debtPaymentId;
+      const isAutoTxn = !!t.billId || !!t.debtPaymentId || !!t.savingsDepositId;
       const autoBadge = t.billId
         ? '<span style="display:inline-block;font-size:0.65rem;background:var(--accent);color:#fff;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;">bill</span>'
         : t.debtPaymentId
         ? '<span style="display:inline-block;font-size:0.65rem;background:var(--info);color:#fff;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;">debt</span>'
+        : t.savingsDepositId
+        ? '<span style="display:inline-block;font-size:0.65rem;background:var(--emerald);color:#fff;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;">savings</span>'
         : '';
       return `<div class="full-transaction-item">
         <span class="transaction-cat-dot" style="background:${catColor}"></span>
@@ -4505,15 +4507,21 @@ input:focus, select:focus, textarea:focus {
   };
 
   window._deleteGoal = async function(id) {
-    const ok = await showConfirm('Delete Goal', 'This will also delete all deposits for this goal. Are you sure?');
+    const ok = await showConfirm('Delete Goal', 'This will also delete all deposits and linked transactions for this goal. Are you sure?');
     if (ok) {
       await dbDelete('savingsGoals', id);
       const deposits = await dbGetAll('savingsDeposits');
       for (const d of deposits.filter(d => d.goalId === id)) {
         await dbDelete('savingsDeposits', d.id);
       }
+      // Remove linked transactions
+      const transactions = await dbGetAll('transactions');
+      for (const t of transactions.filter(t => t.savingsGoalId === id)) {
+        await dbDelete('transactions', t.id);
+      }
       showToast('Goal deleted');
       refreshSavings();
+      if (currentPage === 'dashboard') refreshDashboard();
     }
   };
 
@@ -4551,13 +4559,32 @@ input:focus, select:focus, textarea:focus {
 
     if (!goalId || !amount || !date) { showToast('Please fill in all required fields'); return; }
 
+    const depositId = generateId();
     await dbPut('savingsDeposits', {
-      id: generateId(), goalId, amount, date, note, createdAt: Date.now()
+      id: depositId, goalId, amount, date, note, createdAt: Date.now()
+    });
+
+    // Sync: create an expense transaction for this savings deposit
+    const goals = await dbGetAll('savingsGoals');
+    const goal = goals.find(g => g.id === goalId);
+    const cats = await dbGetAll('categories');
+    const savingsCat = cats.find(c => c.name === 'Savings' && c.type === 'expense');
+    await dbPut('transactions', {
+      id: generateId(),
+      amount,
+      type: 'expense',
+      category: savingsCat ? savingsCat.id : 'Savings',
+      date,
+      description: (goal ? goal.name : 'Savings') + ' deposit' + (note ? ' - ' + note : ''),
+      savingsDepositId: depositId,
+      savingsGoalId: goalId,
+      createdAt: Date.now()
     });
 
     document.getElementById('modal-deposit').classList.remove('open');
     showToast('Deposit added');
     refreshSavings();
+    if (currentPage === 'dashboard') refreshDashboard();
   });
 
   // ============================================
