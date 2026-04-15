@@ -1732,6 +1732,19 @@ input:focus, select:focus, textarea:focus {
 }
 .nw-chart-empty svg { width: 40px; height: 40px; opacity: 0.3; margin-bottom: 12px; }
 .nw-chart-empty p { font-size: 0.85rem; }
+.nw-snapshot-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--emerald-light);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.nw-snapshot-info svg { color: var(--emerald); margin-top: 1px; }
 
 @media (max-width: 768px) {
   .nw-snapshot-banner { flex-direction: column; text-align: center; }
@@ -2537,12 +2550,16 @@ input:focus, select:focus, textarea:focus {
 
         <!-- D. Net Worth Over Time Chart -->
         <div class="card" style="margin-top:32px;margin-bottom:24px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
             <div class="card-title" style="margin-bottom:0;">Net Worth Over Time</div>
             <button class="btn btn-secondary" id="btn-take-snapshot" style="padding:6px 14px;font-size:0.82rem;">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px;height:16px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               Take Snapshot
             </button>
+          </div>
+          <div class="nw-snapshot-info">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px;height:16px;flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>A snapshot saves your current asset and debt totals for this month. Take one each month to track how your net worth changes over time. Savings goal balances are included automatically.</span>
           </div>
           <div id="nw-chart" class="nw-chart-container"></div>
         </div>
@@ -5074,8 +5091,11 @@ input:focus, select:focus, textarea:focus {
     const assets = await dbGetAll('assets');
     const debts = await dbGetAll('debts');
     const snapshots = await dbGetAll('netWorthSnapshots');
+    const savingsGoals = await dbGetAll('savingsGoals');
 
-    const totalAssets = assets.reduce((s, a) => s + (a.value || 0), 0);
+    const manualAssetTotal = assets.reduce((s, a) => s + (a.value || 0), 0);
+    const savingsTotal = savingsGoals.reduce((s, g) => s + (g.savedAmount || 0), 0);
+    const totalAssets = manualAssetTotal + savingsTotal;
     const totalLiabilities = debts.reduce((s, d) => s + (d.balance || 0), 0);
     const netWorth = totalAssets - totalLiabilities;
 
@@ -5100,7 +5120,7 @@ input:focus, select:focus, textarea:focus {
 
     // B. Assets section
     const assetContainer = document.getElementById('nw-asset-list');
-    if (assets.length === 0) {
+    if (assets.length === 0 && savingsGoals.filter(g => (g.savedAmount || 0) > 0).length === 0) {
       assetContainer.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg><h4>No assets added yet</h4><p>Add your accounts and property to track your net worth.</p></div>`;
     } else {
       const grouped = {};
@@ -5124,6 +5144,21 @@ input:focus, select:focus, textarea:focus {
               <button onclick="editAsset('${asset.id}')" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
               <button class="delete" onclick="deleteAsset('${asset.id}')" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
             </div>
+          </div>`;
+        }
+      }
+      // Add savings goals as auto-populated assets
+      if (savingsGoals.length > 0) {
+        html += `<div class="nw-asset-group-title">SAVINGS GOALS</div>`;
+        for (const goal of savingsGoals) {
+          if ((goal.savedAmount || 0) <= 0) continue;
+          html += `<div class="nw-asset-card">
+            <span class="nw-asset-badge savings">SAVINGS</span>
+            <div class="nw-asset-info">
+              <div class="nw-asset-name">${escapeHtml(goal.name)}</div>
+              <div class="nw-asset-note">Auto-synced from <a href="#" onclick="navigateTo('savings');return false;" style="color:var(--emerald);text-decoration:underline;">Savings Goals</a></div>
+            </div>
+            <div class="nw-asset-value">${formatCurrency(goal.savedAmount)}</div>
           </div>`;
         }
       }
