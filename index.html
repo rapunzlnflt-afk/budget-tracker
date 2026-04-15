@@ -1145,6 +1145,35 @@ input:focus, select:focus, textarea:focus {
   border-radius: var(--radius);
   box-shadow: var(--card-shadow);
   padding: 18px 20px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.budget-row.dragging {
+  opacity: 0.4;
+  transform: scale(0.98);
+}
+.budget-row.drag-over {
+  border-top: 3px solid var(--emerald);
+  margin-top: -3px;
+}
+.budget-drag-handle {
+  cursor: grab;
+  color: var(--text-secondary);
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.budget-drag-handle:hover { opacity: 0.8; }
+.budget-drag-handle:active { cursor: grabbing; }
+.budget-drag-handle svg { width: 16px; height: 16px; }
+.budget-move-btns { display: none; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.budget-move-btns button { background: none; border: 1px solid var(--border-color); border-radius: 4px; padding: 1px 4px; cursor: pointer; color: var(--text-secondary); font-size: 0.7rem; line-height: 1; }
+.budget-move-btns button:hover { background: var(--emerald-light); color: var(--emerald); }
+@media (max-width: 768px) {
+  .budget-drag-handle { display: none; }
+  .budget-move-btns { display: flex; }
 }
 
 .budget-row-header {
@@ -4013,8 +4042,10 @@ input:focus, select:focus, textarea:focus {
       const overBudget = budgetAmt > 0 && spent > budgetAmt;
       const barColor = overBudget ? 'var(--danger)' : spent / budgetAmt > 0.8 ? 'var(--warning)' : cat.color;
 
-      return `<div class="budget-row">
+      return `<div class="budget-row" draggable="true" data-cat-id="${cat.id}">
         <div class="budget-row-header">
+          <div class="budget-drag-handle" title="Drag to reorder"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg></div>
+          <div class="budget-move-btns"><button onclick="window._moveBudgetRow('${cat.id}',-1)" title="Move up">&uarr;</button><button onclick="window._moveBudgetRow('${cat.id}',1)" title="Move down">&darr;</button></div>
           <span class="category-color-dot" style="background:${cat.color}"></span>
           <span class="budget-row-name">${escapeHtml(cat.name)}</span>
           <div class="budget-row-amounts">
@@ -4041,7 +4072,90 @@ input:focus, select:focus, textarea:focus {
     const barEl = document.getElementById('budget-util-bar');
     barEl.style.width = Math.min(utilPct, 100) + '%';
     barEl.style.background = utilPct <= 75 ? 'var(--success)' : utilPct <= 100 ? 'var(--warning)' : 'var(--danger)';
+
+    // Drag-and-drop reordering
+    setupBudgetDragDrop();
   }
+
+  function setupBudgetDragDrop() {
+    const list = document.getElementById('budget-list');
+    let draggedEl = null;
+
+    list.querySelectorAll('.budget-row').forEach(row => {
+      row.addEventListener('dragstart', (e) => {
+        draggedEl = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', row.dataset.catId);
+      });
+
+      row.addEventListener('dragend', () => {
+        row.classList.remove('dragging');
+        list.querySelectorAll('.budget-row').forEach(r => r.classList.remove('drag-over'));
+        draggedEl = null;
+      });
+
+      row.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (row !== draggedEl) {
+          list.querySelectorAll('.budget-row').forEach(r => r.classList.remove('drag-over'));
+          row.classList.add('drag-over');
+        }
+      });
+
+      row.addEventListener('dragleave', () => {
+        row.classList.remove('drag-over');
+      });
+
+      row.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        row.classList.remove('drag-over');
+        if (!draggedEl || draggedEl === row) return;
+
+        // Reorder in DOM
+        const allRows = [...list.querySelectorAll('.budget-row')];
+        const fromIdx = allRows.indexOf(draggedEl);
+        const toIdx = allRows.indexOf(row);
+        if (fromIdx < toIdx) {
+          row.parentNode.insertBefore(draggedEl, row.nextSibling);
+        } else {
+          row.parentNode.insertBefore(draggedEl, row);
+        }
+
+        // Persist new order to categories store
+        const newOrder = [...list.querySelectorAll('.budget-row')].map(r => r.dataset.catId);
+        const cats = await dbGetAll('categories');
+        for (let i = 0; i < newOrder.length; i++) {
+          const cat = cats.find(c => c.id === newOrder[i]);
+          if (cat) {
+            cat.order = i;
+            await dbPut('categories', cat);
+          }
+        }
+        showToast('Order updated');
+      });
+    });
+  }
+
+  window._moveBudgetRow = async function(catId, direction) {
+    const cats = await getCategoriesList();
+    const expenseCats = cats.filter(c => (c.type || 'expense') === 'expense');
+    const idx = expenseCats.findIndex(c => c.id === catId);
+    if (idx < 0) return;
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= expenseCats.length) return;
+
+    // Swap order values
+    const a = expenseCats[idx];
+    const b = expenseCats[newIdx];
+    const tmpOrder = a.order;
+    a.order = b.order;
+    b.order = tmpOrder;
+    await dbPut('categories', a);
+    await dbPut('categories', b);
+    refreshBudget();
+  };
 
   document.getElementById('budget-prev').addEventListener('click', () => {
     budgetMonth = prevMonth(budgetMonth);
