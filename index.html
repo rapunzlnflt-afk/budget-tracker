@@ -1096,56 +1096,123 @@ input:focus, select:focus, textarea:focus {
 }
 
 .budget-utilization {
-  background: var(--card-bg);
+  background: linear-gradient(135deg, var(--emerald-light) 0%, var(--card-bg) 100%);
   border-radius: var(--radius);
   box-shadow: var(--card-shadow);
-  padding: 24px;
-  margin-bottom: 24px;
-  text-align: center;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.budget-utilization::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 10% 50%, rgba(61,139,110,0.08) 0%, transparent 60%);
+  pointer-events: none;
 }
 
-.budget-utilization-pct {
-  font-size: 2.5rem;
+.budget-util-ring {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+.budget-util-ring svg {
+  width: 80px;
+  height: 80px;
+  transform: rotate(-90deg);
+}
+.budget-util-ring .ring-bg {
+  fill: none;
+  stroke: var(--bg-secondary);
+  stroke-width: 6;
+}
+.budget-util-ring .ring-fill {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease;
+}
+.budget-util-ring-pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
   font-weight: 800;
   line-height: 1;
 }
 
-.budget-utilization-pct.safe { color: var(--success); }
-.budget-utilization-pct.warn { color: var(--warning); }
-.budget-utilization-pct.over { color: var(--danger); }
+.budget-utilization-pct.safe, .budget-util-ring-pct.safe { color: var(--success); }
+.budget-utilization-pct.warn, .budget-util-ring-pct.warn { color: var(--warning); }
+.budget-utilization-pct.over, .budget-util-ring-pct.over { color: var(--danger); }
 
-.budget-utilization-label {
+.budget-util-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.budget-util-details-title {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.budget-util-details-amounts {
   font-size: 0.85rem;
   color: var(--text-secondary);
   margin-top: 4px;
 }
+.budget-util-details-amounts strong {
+  color: var(--text-primary);
+}
 
 .budget-utilization-bar {
-  height: 10px;
+  height: 6px;
   background: var(--bg-secondary);
-  border-radius: 5px;
-  margin-top: 16px;
+  border-radius: 3px;
+  margin-top: 8px;
   overflow: hidden;
 }
 
 .budget-utilization-bar-fill {
   height: 100%;
-  border-radius: 5px;
+  border-radius: 3px;
   transition: width 0.8s ease;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, transparent 100%);
 }
 
 .budget-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .budget-row {
   background: var(--card-bg);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   box-shadow: var(--card-shadow);
-  padding: 18px 20px;
-  transition: opacity 0.2s, transform 0.2s;
+  padding: 10px 14px;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid var(--border-color);
+}
+.budget-row:nth-child(even) {
+  background: color-mix(in srgb, var(--card-bg) 97%, var(--emerald-light) 3%);
+}
+@supports not (background: color-mix(in srgb, white, black)) {
+  .budget-row:nth-child(even) { background: var(--card-bg); }
+}
+.budget-row:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-1px);
 }
 .budget-row.dragging {
   opacity: 0.4;
@@ -1162,14 +1229,14 @@ input:focus, select:focus, textarea:focus {
   transition: opacity 0.2s;
   display: flex;
   align-items: center;
-  padding: 0 4px;
+  padding: 0 2px;
   flex-shrink: 0;
 }
 .budget-drag-handle:hover { opacity: 0.8; }
 .budget-drag-handle:active { cursor: grabbing; }
-.budget-drag-handle svg { width: 16px; height: 16px; }
-.budget-move-btns { display: none; flex-direction: column; gap: 2px; flex-shrink: 0; }
-.budget-move-btns button { background: none; border: 1px solid var(--border-color); border-radius: 4px; padding: 1px 4px; cursor: pointer; color: var(--text-secondary); font-size: 0.7rem; line-height: 1; }
+.budget-drag-handle svg { width: 14px; height: 14px; }
+.budget-move-btns { display: none; flex-direction: column; gap: 1px; flex-shrink: 0; }
+.budget-move-btns button { background: none; border: 1px solid var(--border-color); border-radius: 4px; padding: 1px 4px; cursor: pointer; color: var(--text-secondary); font-size: 0.65rem; line-height: 1; }
 .budget-move-btns button:hover { background: var(--emerald-light); color: var(--emerald); }
 @media (max-width: 768px) {
   .budget-drag-handle { display: none; }
@@ -1179,63 +1246,112 @@ input:focus, select:focus, textarea:focus {
 .budget-row-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
 .budget-row-name {
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   flex: 1;
-}
-
-.budget-row-amounts {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  display: flex;
-  gap: 12px;
-}
-
-.budget-row-amounts span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.budget-row-amounts {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  flex-shrink: 0;
+}
+
+.budget-row-amounts .budget-spent {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.budget-row-amounts .budget-of {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.budget-row-amounts .budget-limit {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
 .budget-bar {
-  height: 10px;
+  height: 6px;
   background: var(--bg-secondary);
-  border-radius: 5px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .budget-bar-fill {
   height: 100%;
-  border-radius: 5px;
+  border-radius: 3px;
   transition: width 0.8s ease;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 100%);
+  position: relative;
 }
 
 .budget-row-input {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .budget-row-input input {
-  width: 120px;
-  padding: 6px 10px;
-  font-size: 0.85rem;
+  width: 110px;
+  padding: 4px 8px;
+  font-size: 0.82rem;
 }
 
 .budget-row-input .btn {
-  padding: 6px 14px;
-  font-size: 0.8rem;
+  padding: 4px 12px;
+  font-size: 0.78rem;
 }
 
 .budget-actions {
   display: flex;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
+}
+
+#btn-copy-budget {
+  font-size: 0.78rem;
+  padding: 5px 14px;
+  border: 1px solid var(--emerald);
+  color: var(--emerald);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s, color 0.2s;
+}
+#btn-copy-budget:hover {
+  background: var(--emerald);
+  color: #fff;
+}
+
+[data-theme="dark"] .budget-utilization {
+  background: linear-gradient(135deg, var(--emerald-light) 0%, var(--card-bg) 100%);
+}
+[data-theme="dark"] .budget-row:nth-child(even) {
+  background: rgba(255,255,255,0.02);
+}
+[data-theme="dark"] #btn-copy-budget {
+  border-color: var(--emerald);
+  color: var(--emerald-light);
+}
+[data-theme="dark"] #btn-copy-budget:hover {
+  background: var(--emerald);
+  color: #fff;
 }
 
 /* ============================================
@@ -2329,10 +2445,21 @@ input:focus, select:focus, textarea:focus {
         </div>
 
         <div class="budget-utilization" id="budget-utilization">
-          <div class="budget-utilization-pct safe" id="budget-util-pct">0%</div>
-          <div class="budget-utilization-label">Overall Budget Utilization</div>
-          <div class="budget-utilization-bar">
-            <div class="budget-utilization-bar-fill animate-bar" id="budget-util-bar" style="width:0%;background:var(--success);"></div>
+          <div class="budget-util-ring">
+            <svg viewBox="0 0 36 36">
+              <circle class="ring-bg" cx="18" cy="18" r="15"></circle>
+              <circle class="ring-fill" id="budget-util-ring-fill" cx="18" cy="18" r="15" stroke="var(--success)" stroke-dasharray="94.25" stroke-dashoffset="94.25"></circle>
+            </svg>
+            <div class="budget-util-ring-pct safe" id="budget-util-pct">0%</div>
+          </div>
+          <div class="budget-util-details">
+            <div class="budget-util-details-title">Budget Utilization</div>
+            <div class="budget-util-details-amounts" id="budget-util-amounts">
+              <strong>$0</strong> spent of <strong>$0</strong> budgeted
+            </div>
+            <div class="budget-utilization-bar">
+              <div class="budget-utilization-bar-fill animate-bar" id="budget-util-bar" style="width:0%;background:var(--success);"></div>
+            </div>
           </div>
         </div>
 
@@ -4042,15 +4169,15 @@ input:focus, select:focus, textarea:focus {
       const overBudget = budgetAmt > 0 && spent > budgetAmt;
       const barColor = overBudget ? 'var(--danger)' : spent / budgetAmt > 0.8 ? 'var(--warning)' : cat.color;
 
-      return `<div class="budget-row" draggable="true" data-cat-id="${cat.id}">
+      return `<div class="budget-row" draggable="true" data-cat-id="${cat.id}" style="border-left-color:${cat.color}">
         <div class="budget-row-header">
           <div class="budget-drag-handle" title="Drag to reorder"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg></div>
           <div class="budget-move-btns"><button onclick="window._moveBudgetRow('${cat.id}',-1)" title="Move up">&uarr;</button><button onclick="window._moveBudgetRow('${cat.id}',1)" title="Move down">&darr;</button></div>
-          <span class="category-color-dot" style="background:${cat.color}"></span>
           <span class="budget-row-name">${escapeHtml(cat.name)}</span>
           <div class="budget-row-amounts">
-            <span>Spent: <strong>${formatCurrency(spent)}</strong></span>
-            <span>Budget: <strong>${budgetAmt > 0 ? formatCurrency(budgetAmt) : 'Not set'}</strong></span>
+            <span class="budget-spent">${formatCurrency(spent)}</span>
+            <span class="budget-of">/</span>
+            <span class="budget-limit">${budgetAmt > 0 ? formatCurrency(budgetAmt) : 'No limit'}</span>
           </div>
         </div>
         ${budgetAmt > 0 ? `<div class="budget-bar"><div class="budget-bar-fill animate-bar" style="width:${pct}%;background:${barColor}"></div></div>` : ''}
@@ -4065,13 +4192,27 @@ input:focus, select:focus, textarea:focus {
 
     // Utilization: spent across budgeted categories / total budget
     const utilPct = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+    const utilClass = utilPct <= 75 ? 'safe' : utilPct <= 100 ? 'warn' : 'over';
+    const utilColor = utilPct <= 75 ? 'var(--success)' : utilPct <= 100 ? 'var(--warning)' : 'var(--danger)';
+
     const utilEl = document.getElementById('budget-util-pct');
     utilEl.textContent = Math.round(utilPct) + '%';
-    utilEl.className = 'budget-utilization-pct ' + (utilPct <= 75 ? 'safe' : utilPct <= 100 ? 'warn' : 'over');
+    utilEl.className = 'budget-util-ring-pct ' + utilClass;
+
+    // Ring chart: circumference = 2 * pi * 15 ≈ 94.25
+    const circumference = 94.25;
+    const ringFill = document.getElementById('budget-util-ring-fill');
+    const ringOffset = circumference - (Math.min(utilPct, 100) / 100) * circumference;
+    ringFill.setAttribute('stroke-dashoffset', ringOffset);
+    ringFill.setAttribute('stroke', utilColor);
+
+    // Amounts text
+    const amountsEl = document.getElementById('budget-util-amounts');
+    amountsEl.innerHTML = `<strong>${formatCurrency(totalSpent)}</strong> spent of <strong>${formatCurrency(totalBudget)}</strong> budgeted`;
 
     const barEl = document.getElementById('budget-util-bar');
     barEl.style.width = Math.min(utilPct, 100) + '%';
-    barEl.style.background = utilPct <= 75 ? 'var(--success)' : utilPct <= 100 ? 'var(--warning)' : 'var(--danger)';
+    barEl.style.background = utilColor;
 
     // Drag-and-drop reordering
     setupBudgetDragDrop();
