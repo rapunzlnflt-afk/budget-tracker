@@ -4625,6 +4625,9 @@ input:focus, select:focus, textarea:focus {
 
     const allTransactions = await dbGetAll('transactions');
     const catMap = await getCategoriesMap();
+    // Also build name-based lookup since transactions store category as name string
+    const catNameMap = {};
+    Object.values(catMap).forEach(c => { catNameMap[c.name] = c; catNameMap[c.name.toLowerCase()] = c; });
     const yearStr = String(reportsYear);
 
     // Filter transactions for the selected year
@@ -4679,7 +4682,7 @@ input:focus, select:focus, textarea:focus {
     });
 
     const catEntries = Object.entries(catTotals)
-      .map(([id, total]) => ({ id, total, cat: catMap[id] }))
+      .map(([id, total]) => ({ id, total, cat: catMap[id] || catNameMap[id] || { name: id, color: null } }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 5);
 
