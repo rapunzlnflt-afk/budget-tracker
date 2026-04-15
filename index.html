@@ -1546,6 +1546,241 @@ input:focus, select:focus, textarea:focus {
 .tip-card-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
 .tip-card-content p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
 
+/* ============================================
+   REPORTS PAGE
+   ============================================ */
+.reports-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 220px;
+  padding-top: 12px;
+}
+
+.reports-bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.reports-bar-group-bars {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  min-height: 0;
+}
+
+.reports-bar {
+  flex: 1;
+  border-radius: 4px 4px 0 0;
+  min-height: 2px;
+  transition: height 0.6s ease;
+  position: relative;
+  cursor: default;
+}
+
+.reports-bar.income {
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
+}
+
+.reports-bar.expense {
+  background: linear-gradient(135deg, #f28b82 0%, #e07066 100%);
+}
+
+.reports-bar-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.reports-bar:hover .reports-bar-tooltip {
+  display: block;
+}
+
+.reports-bar-month {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* Category breakdown */
+.reports-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reports-category-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reports-category-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.reports-category-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.reports-category-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.reports-category-bar-track {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.reports-category-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.reports-category-amount {
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: right;
+}
+
+.reports-category-pct {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: right;
+  min-width: 42px;
+}
+
+/* Savings rate grid */
+.reports-savings-rate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.reports-sr-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 12px 8px;
+  text-align: center;
+  transition: transform var(--transition);
+}
+
+.reports-sr-card:hover {
+  transform: translateY(-2px);
+}
+
+.reports-sr-month {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.reports-sr-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.reports-sr-value.positive { color: var(--emerald); }
+.reports-sr-value.negative { color: var(--danger); }
+.reports-sr-value.neutral { color: var(--text-muted); }
+
+/* Best/Worst month cards */
+.reports-highlight-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.reports-highlight-card .stat-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reports-highlight-card .stat-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.reports-highlight-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.reports-highlight-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.reports-highlight-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .reports-bar-chart {
+    height: 160px;
+    gap: 4px;
+  }
+  .reports-bar-month {
+    font-size: 0.6rem;
+  }
+  .reports-savings-rate-grid {
+    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+    gap: 6px;
+  }
+  .reports-sr-card {
+    padding: 8px 4px;
+  }
+  .reports-sr-value {
+    font-size: 0.95rem;
+  }
+  .reports-category-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
 /* Icon picker */
 .icon-picker { display: flex; flex-wrap: wrap; gap: 8px; }
 .icon-picker-item { width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; transition: all var(--transition); background: var(--card-bg); }
@@ -1625,7 +1860,6 @@ input:focus, select:focus, textarea:focus {
       <button class="sidebar-link" data-page="reports">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         Reports
-        <span class="coming-soon">Soon</span>
       </button>
       <button class="sidebar-link" data-page="networth">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
@@ -2011,17 +2245,68 @@ input:focus, select:focus, textarea:focus {
       </div>
     </div>
 
-    <!-- ========== REPORTS (Coming Soon) ========== -->
+    <!-- ========== REPORTS ========== -->
     <div class="page" id="page-reports">
       <div class="page-header">
         <h2>Reports</h2>
-        <p>Visualize your financial trends</p>
+        <p>Insights into your financial habits</p>
       </div>
       <div class="page-body">
-        <div class="coming-soon-page">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          <h3>Coming Soon</h3>
-          <p>Monthly trends, category breakdowns, savings rate tracking, and year-to-date summaries. Coming in Phase 3.</p>
+        <!-- Year navigation -->
+        <div class="month-nav" style="margin-bottom:20px;">
+          <button id="reports-prev-year" aria-label="Previous year">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <span class="month-nav-label" id="reports-year-label">2026</span>
+          <button id="reports-next-year" aria-label="Next year">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- A. YTD Summary Cards -->
+        <div class="stat-grid" id="reports-stats"></div>
+
+        <!-- B. Income vs Expenses Bar Chart -->
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-title">Income vs Expenses</div>
+          <div id="reports-income-expense-chart" class="reports-bar-chart"></div>
+        </div>
+
+        <!-- C. Spending by Category -->
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-title">Top Spending Categories</div>
+          <div id="reports-category-breakdown"></div>
+        </div>
+
+        <!-- D. Monthly Savings Rate -->
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-title">Monthly Savings Rate</div>
+          <div id="reports-savings-rate" class="reports-savings-rate-grid"></div>
+        </div>
+
+        <!-- E. Best & Worst Months -->
+        <div class="stat-grid" id="reports-best-worst" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));"></div>
+
+        <!-- F. Tip Cards -->
+        <div class="tip-grid">
+          <div class="tip-card">
+            <div class="tip-card-content">
+              <h4>Track Consistently</h4>
+              <p>The more transactions you log, the more accurate your reports become. Make it a daily habit.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-content">
+              <h4>Watch the Trends</h4>
+              <p>Month-over-month comparisons reveal spending patterns you might miss day-to-day.</p>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-card-content">
+              <h4>Set Benchmarks</h4>
+              <p>Financial experts suggest saving at least 20% of income. Use your savings rate to track progress.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2442,6 +2727,7 @@ input:focus, select:focus, textarea:focus {
   let currentTxnType = 'expense';
   let dashMonth = new Date().toISOString().slice(0, 7);
   let budgetMonth = new Date().toISOString().slice(0, 7);
+  let reportsYear = new Date().getFullYear();
   let debtStrategy = 'snowball';
   let selectedGoalIcon = '\u{1F4B0}';
 
@@ -2670,6 +2956,7 @@ input:focus, select:focus, textarea:focus {
     else if (page === 'bills') refreshBills();
     else if (page === 'savings') refreshSavings();
     else if (page === 'debt') refreshDebt();
+    else if (page === 'reports') refreshReports();
   }
 
   function updateFAB() {
@@ -2716,6 +3003,16 @@ input:focus, select:focus, textarea:focus {
   document.getElementById('dash-next').addEventListener('click', () => {
     dashMonth = nextMonth(dashMonth);
     refreshDashboard();
+  });
+
+  // Reports year nav
+  document.getElementById('reports-prev-year').addEventListener('click', () => {
+    reportsYear--;
+    refreshReports();
+  });
+  document.getElementById('reports-next-year').addEventListener('click', () => {
+    reportsYear++;
+    refreshReports();
   });
 
   // ============================================
@@ -4317,6 +4614,145 @@ input:focus, select:focus, textarea:focus {
 
     e.target.value = '';
   });
+
+  // ============================================
+  // REPORTS PAGE
+  // ============================================
+  const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  async function refreshReports() {
+    document.getElementById('reports-year-label').textContent = reportsYear;
+
+    const allTransactions = await dbGetAll('transactions');
+    const catMap = await getCategoriesMap();
+    const yearStr = String(reportsYear);
+
+    // Filter transactions for the selected year
+    const yearTxns = allTransactions.filter(t => t.date.startsWith(yearStr));
+
+    // Build monthly data (12 months)
+    const monthly = [];
+    for (let m = 0; m < 12; m++) {
+      const mm = String(m + 1).padStart(2, '0');
+      const prefix = yearStr + '-' + mm;
+      const monthTxns = yearTxns.filter(t => t.date.startsWith(prefix));
+      const income = monthTxns.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+      const expenses = monthTxns.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+      monthly.push({ month: m, income, expenses, net: income - expenses });
+    }
+
+    // A. YTD Summary Cards
+    const totalIncome = monthly.reduce((s, m) => s + m.income, 0);
+    const totalExpenses = monthly.reduce((s, m) => s + m.expenses, 0);
+    const netSavings = totalIncome - totalExpenses;
+    const savingsRate = totalIncome > 0 ? (netSavings / totalIncome * 100) : 0;
+
+    document.getElementById('reports-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-card-icon income"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m0-16l-4 4m4-4l4 4"/></svg></div><div><div class="stat-card-label">Total Income YTD</div><div class="stat-card-value">${formatCurrency(totalIncome)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4"/></svg></div><div><div class="stat-card-label">Total Expenses YTD</div><div class="stat-card-value">${formatCurrency(totalExpenses)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon net"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z"/></svg></div><div><div class="stat-card-label">Net Savings YTD</div><div class="stat-card-value" style="color:${netSavings >= 0 ? 'var(--success)' : 'var(--danger)'}">${netSavings < 0 ? '-' : ''}${formatCurrency(netSavings)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon emerald"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><div><div class="stat-card-label">Savings Rate</div><div class="stat-card-value">${savingsRate.toFixed(1)}%</div></div></div>`;
+
+    // B. Income vs Expenses Bar Chart
+    const maxVal = Math.max(1, ...monthly.map(m => Math.max(m.income, m.expenses)));
+
+    const chartHtml = monthly.map(m => {
+      const incH = m.income > 0 ? Math.max(2, (m.income / maxVal) * 100) : 0;
+      const expH = m.expenses > 0 ? Math.max(2, (m.expenses / maxVal) * 100) : 0;
+      return `<div class="reports-bar-group">
+        <div class="reports-bar-group-bars">
+          <div class="reports-bar income" style="height:${incH}%"><span class="reports-bar-tooltip">${formatCurrency(m.income)}</span></div>
+          <div class="reports-bar expense" style="height:${expH}%"><span class="reports-bar-tooltip">${formatCurrency(m.expenses)}</span></div>
+        </div>
+        <div class="reports-bar-month">${MONTH_SHORT[m.month]}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('reports-income-expense-chart').innerHTML = chartHtml || '<div class="empty-state"><h4>No data yet</h4><p>Add transactions to see your income vs expenses chart</p></div>';
+
+    // C. Spending by Category
+    const expenseTxns = yearTxns.filter(t => t.type === 'expense');
+    const catTotals = {};
+    expenseTxns.forEach(t => {
+      const cid = t.category || t.categoryId || 'uncategorized';
+      catTotals[cid] = (catTotals[cid] || 0) + t.amount;
+    });
+
+    const catEntries = Object.entries(catTotals)
+      .map(([id, total]) => ({ id, total, cat: catMap[id] }))
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5);
+
+    const totalCatSpend = Object.values(catTotals).reduce((s, v) => s + v, 0);
+    const maxCatVal = catEntries.length > 0 ? catEntries[0].total : 1;
+
+    const fallbackColors = ['#3d8b6e', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
+    const catContainer = document.getElementById('reports-category-breakdown');
+
+    if (catEntries.length === 0) {
+      catContainer.innerHTML = '<div class="empty-state"><h4>No expenses yet</h4><p>Add expense transactions to see category breakdowns</p></div>';
+    } else {
+      catContainer.innerHTML = '<div class="reports-category-list">' + catEntries.map((entry, i) => {
+        const color = (entry.cat && entry.cat.color) ? entry.cat.color : fallbackColors[i % fallbackColors.length];
+        const name = entry.cat ? escapeHtml(entry.cat.name) : 'Uncategorized';
+        const pct = totalCatSpend > 0 ? (entry.total / totalCatSpend * 100) : 0;
+        const barW = maxCatVal > 0 ? (entry.total / maxCatVal * 100) : 0;
+        return `<div class="reports-category-row">
+          <div class="reports-category-dot" style="background:${color}"></div>
+          <div class="reports-category-info">
+            <div class="reports-category-name">${name}</div>
+            <div class="reports-category-bar-track"><div class="reports-category-bar-fill" style="width:${barW}%;background:${color}"></div></div>
+          </div>
+          <div class="reports-category-amount">${formatCurrency(entry.total)}</div>
+          <div class="reports-category-pct">${pct.toFixed(1)}%</div>
+        </div>`;
+      }).join('') + '</div>';
+    }
+
+    // D. Monthly Savings Rate
+    const srHtml = monthly.map(m => {
+      const sr = m.income > 0 ? ((m.income - m.expenses) / m.income * 100) : 0;
+      const hasData = m.income > 0 || m.expenses > 0;
+      const cls = !hasData ? 'neutral' : sr >= 0 ? 'positive' : 'negative';
+      return `<div class="reports-sr-card">
+        <div class="reports-sr-month">${MONTH_SHORT[m.month]}</div>
+        <div class="reports-sr-value ${cls}">${hasData ? sr.toFixed(0) + '%' : '\u2014'}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('reports-savings-rate').innerHTML = srHtml;
+
+    // E. Best & Worst Months
+    const monthsWithData = monthly.filter(m => m.income > 0 || m.expenses > 0);
+    const bwContainer = document.getElementById('reports-best-worst');
+
+    if (monthsWithData.length === 0) {
+      bwContainer.innerHTML = '';
+    } else {
+      const best = monthsWithData.reduce((a, b) => a.net > b.net ? a : b);
+      const worst = monthsWithData.reduce((a, b) => a.net < b.net ? a : b);
+      const bestSR = best.income > 0 ? (best.net / best.income * 100).toFixed(1) : '0.0';
+      const worstSR = worst.income > 0 ? (worst.net / worst.income * 100).toFixed(1) : '0.0';
+
+      bwContainer.innerHTML = `
+        <div class="reports-highlight-card">
+          <div class="stat-card-icon income"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+          <div>
+            <div class="reports-highlight-label">Best Month</div>
+            <div class="reports-highlight-value" style="color:var(--success)">${best.net < 0 ? '-' : ''}${formatCurrency(best.net)}</div>
+            <div class="reports-highlight-meta">${MONTH_SHORT[best.month]} ${yearStr} &middot; ${bestSR}% savings rate</div>
+          </div>
+        </div>
+        <div class="reports-highlight-card">
+          <div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3l9.66 16.59A1 1 0 0120.83 21H3.17a1 1 0 01-.83-1.41L12 3z"/></svg></div>
+          <div>
+            <div class="reports-highlight-label">Worst Month</div>
+            <div class="reports-highlight-value" style="color:var(--danger)">${worst.net < 0 ? '-' : ''}${formatCurrency(worst.net)}</div>
+            <div class="reports-highlight-meta">${MONTH_SHORT[worst.month]} ${yearStr} &middot; ${worstSR}% savings rate</div>
+          </div>
+        </div>`;
+    }
+  }
 
   // ============================================
   // INIT
