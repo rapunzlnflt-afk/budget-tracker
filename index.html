@@ -1502,6 +1502,8 @@ input:focus, select:focus, textarea:focus {
 .debt-payments { margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 10px; }
 .debt-payment-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.82rem; border-bottom: 1px solid var(--border-color); }
 .debt-payment-item:last-child { border-bottom: none; }
+.debt-payment-delete { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: all var(--transition); font-weight: 600; }
+.debt-payment-delete:hover { color: var(--danger); background: var(--danger-light); }
 @media (max-width: 480px) {
   .debt-card-details { grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 8px; }
   .debt-detail-item { font-size: 0.7rem; }
@@ -1978,21 +1980,18 @@ input:focus, select:focus, textarea:focus {
         <div class="debt-list" id="debt-list"></div>
         <div class="tip-grid">
           <div class="tip-card">
-            <div class="tip-card-icon">&#127919;</div>
             <div class="tip-card-content">
               <h4>Pick a Strategy</h4>
               <p>Snowball gives quick wins for motivation. Avalanche saves more money. Pick the one you'll stick with.</p>
             </div>
           </div>
           <div class="tip-card">
-            <div class="tip-card-icon">&#128640;</div>
             <div class="tip-card-content">
               <h4>Extra Payments</h4>
               <p>Even $50 extra per month on your target debt can shave months or years off your payoff date.</p>
             </div>
           </div>
           <div class="tip-card">
-            <div class="tip-card-icon">&#10060;</div>
             <div class="tip-card-content">
               <h4>Avoid New Debt</h4>
               <p>While paying off debt, freeze credit card spending. Use cash or debit to avoid backsliding.</p>
@@ -4008,13 +4007,12 @@ input:focus, select:focus, textarea:focus {
       const paymentsHtml = debtPayments.length > 0
         ? `<div class="debt-payments">
             <button class="goal-deposits-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">Show ${debtPayments.length} payment${debtPayments.length > 1 ? 's' : ''}</button>
-            <div style="display:none">${debtPayments.map(p => `<div class="debt-payment-item"><span>${formatDate(p.date)}${p.note ? ' - ' + escapeHtml(p.note) : ''}</span><span style="color:var(--success);font-weight:600;">-${formatCurrency(p.amount)}</span></div>`).join('')}</div>
+            <div style="display:none">${debtPayments.map(p => `<div class="debt-payment-item"><span>${formatDate(p.date)}${p.note ? ' - ' + escapeHtml(p.note) : ''}</span><div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--success);font-weight:600;">-${formatCurrency(p.amount)}</span><button class="debt-payment-delete" onclick="window._deleteDebtPayment('${p.id}','${debt.id}',${p.amount})" title="Remove payment">&times;</button></div></div>`).join('')}</div>
           </div>`
         : '';
 
       return `<div class="debt-card${isPaidOff ? ' paid-off' : ''}">
         <div class="debt-card-header">
-          <div class="debt-card-icon">${icon}</div>
           <div class="debt-card-title-group">
             <div class="debt-card-name">${escapeHtml(debt.name)}</div>
             <div class="debt-card-subtitle">
@@ -4137,6 +4135,28 @@ input:focus, select:focus, textarea:focus {
         await dbDelete('transactions', t.id);
       }
       showToast('Debt deleted');
+      refreshDebt();
+      if (currentPage === 'dashboard') refreshDashboard();
+    }
+  };
+
+  window._deleteDebtPayment = async function(paymentId, debtId, amount) {
+    const ok = await showConfirm('Remove Payment', 'This will remove the payment and add the amount back to the debt balance. Continue?');
+    if (ok) {
+      // Delete the payment record
+      await dbDelete('debtPayments', paymentId);
+      // Add the amount back to the debt balance
+      const debts = await dbGetAll('debts');
+      const debt = debts.find(d => d.id === debtId);
+      if (debt) {
+        debt.balance = debt.balance + amount;
+        await dbPut('debts', debt);
+      }
+      // Remove the linked transaction
+      const transactions = await dbGetAll('transactions');
+      const linkedTxn = transactions.find(t => t.debtPaymentId === paymentId);
+      if (linkedTxn) await dbDelete('transactions', linkedTxn.id);
+      showToast('Payment removed');
       refreshDebt();
       if (currentPage === 'dashboard') refreshDashboard();
     }
