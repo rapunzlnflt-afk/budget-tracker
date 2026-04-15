@@ -5092,9 +5092,16 @@ input:focus, select:focus, textarea:focus {
     const debts = await dbGetAll('debts');
     const snapshots = await dbGetAll('netWorthSnapshots');
     const savingsGoals = await dbGetAll('savingsGoals');
+    const savingsDeposits = await dbGetAll('savingsDeposits');
+
+    // Compute actual saved amount per goal from deposits
+    const goalSavedMap = {};
+    savingsDeposits.forEach(d => {
+      goalSavedMap[d.goalId] = (goalSavedMap[d.goalId] || 0) + d.amount;
+    });
 
     const manualAssetTotal = assets.reduce((s, a) => s + (a.value || 0), 0);
-    const savingsTotal = savingsGoals.reduce((s, g) => s + (g.savedAmount || 0), 0);
+    const savingsTotal = Object.values(goalSavedMap).reduce((s, v) => s + v, 0);
     const totalAssets = manualAssetTotal + savingsTotal;
     const totalLiabilities = debts.reduce((s, d) => s + (d.balance || 0), 0);
     const netWorth = totalAssets - totalLiabilities;
@@ -5120,7 +5127,7 @@ input:focus, select:focus, textarea:focus {
 
     // B. Assets section
     const assetContainer = document.getElementById('nw-asset-list');
-    if (assets.length === 0 && savingsGoals.filter(g => (g.savedAmount || 0) > 0).length === 0) {
+    if (assets.length === 0 && savingsGoals.filter(g => (goalSavedMap[g.id] || 0) > 0).length === 0) {
       assetContainer.innerHTML = `<div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg><h4>No assets added yet</h4><p>Add your accounts and property to track your net worth.</p></div>`;
     } else {
       const grouped = {};
@@ -5149,17 +5156,20 @@ input:focus, select:focus, textarea:focus {
       }
       // Add savings goals as auto-populated assets
       if (savingsGoals.length > 0) {
-        html += `<div class="nw-asset-group-title">SAVINGS GOALS</div>`;
-        for (const goal of savingsGoals) {
-          if ((goal.savedAmount || 0) <= 0) continue;
-          html += `<div class="nw-asset-card">
-            <span class="nw-asset-badge savings">SAVINGS</span>
-            <div class="nw-asset-info">
-              <div class="nw-asset-name">${escapeHtml(goal.name)}</div>
-              <div class="nw-asset-note">Auto-synced from <a href="#" onclick="navigateTo('savings');return false;" style="color:var(--emerald);text-decoration:underline;">Savings Goals</a></div>
-            </div>
-            <div class="nw-asset-value">${formatCurrency(goal.savedAmount)}</div>
-          </div>`;
+        const goalsWithSavings = savingsGoals.filter(g => (goalSavedMap[g.id] || 0) > 0);
+        if (goalsWithSavings.length > 0) {
+          html += `<div class="nw-asset-group-title">SAVINGS GOALS</div>`;
+          for (const goal of goalsWithSavings) {
+            const saved = goalSavedMap[goal.id] || 0;
+            html += `<div class="nw-asset-card">
+              <span class="nw-asset-badge savings">SAVINGS</span>
+              <div class="nw-asset-info">
+                <div class="nw-asset-name">${escapeHtml(goal.name)}</div>
+                <div class="nw-asset-note">Auto-synced from <a href="#" onclick="navigateTo('savings');return false;" style="color:var(--emerald);text-decoration:underline;">Savings Goals</a></div>
+              </div>
+              <div class="nw-asset-value">${formatCurrency(saved)}</div>
+            </div>`;
+          }
         }
       }
       assetContainer.innerHTML = html;
