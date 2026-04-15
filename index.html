@@ -310,7 +310,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .toggle-switch.active {
-  background: var(--emerald);
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
 }
 
 .toggle-switch::after {
@@ -670,7 +670,7 @@ input:focus, select:focus, textarea:focus {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--emerald);
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -813,12 +813,12 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-primary {
-  background: var(--emerald);
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
   color: #fff;
 }
 
 .btn-primary:hover {
-  background: var(--emerald-dark);
+  background: linear-gradient(135deg, var(--emerald-dark) 0%, var(--emerald-dark) 100%);
 }
 
 .btn-secondary {
@@ -1453,7 +1453,7 @@ input:focus, select:focus, textarea:focus {
 .goal-card-target { font-size: 0.82rem; color: var(--text-secondary); }
 .goal-progress { margin-bottom: 10px; }
 .goal-progress-bar { height: 10px; background: var(--bg-secondary); border-radius: 5px; overflow: hidden; margin-bottom: 6px; }
-.goal-progress-fill { height: 100%; border-radius: 5px; background: var(--emerald); transition: width 0.8s ease; }
+.goal-progress-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--emerald) 0%, var(--emerald-dark) 100%); transition: width 0.8s ease; }
 .goal-progress-info { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-secondary); }
 .goal-card-actions { display: flex; gap: 4px; }
 .goal-card-actions button { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted); transition: all var(--transition); }
@@ -1514,9 +1514,6 @@ input:focus, select:focus, textarea:focus {
 .strategy-toggle button { flex: 1; padding: 10px 16px; font-weight: 600; font-size: 0.88rem; transition: all var(--transition); color: var(--text-secondary); background: var(--card-bg); }
 .strategy-toggle button.active { background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%); color: #fff; }
 .strategy-desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; padding: 12px; background: var(--bg-secondary); border-radius: var(--radius-sm); }
-#page-debt .btn-primary { background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%); }
-#page-debt .btn-primary:hover { background: linear-gradient(135deg, var(--emerald-dark) 0%, var(--emerald-dark) 100%); }
-
 /* Tip cards */
 .tip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 32px; }
 .tip-card {
