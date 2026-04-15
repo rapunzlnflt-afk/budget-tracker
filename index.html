@@ -18,9 +18,9 @@
 }
 
 :root {
-  --emerald: #10b981;
-  --emerald-dark: #059669;
-  --emerald-light: #d1fae5;
+  --emerald: #3d8b6e;
+  --emerald-dark: #2d6b54;
+  --emerald-light: #e0f0e8;
   --sidebar-bg: #1f2937;
   --sidebar-text: #d1d5db;
   --sidebar-active: #f97316;
@@ -65,8 +65,8 @@
   --success-light: #14532d;
   --warning-light: #451a03;
   --info-light: #1e3a5f;
-  --emerald-light: #064e3b;
-  --header-gradient: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+  --emerald-light: #1a3d2e;
+  --header-gradient: linear-gradient(135deg, #1a3d2e 0%, #234f3d 100%);
 }
 
 html {
@@ -675,14 +675,14 @@ input:focus, select:focus, textarea:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(16,185,129,0.4);
+  box-shadow: 0 4px 16px rgba(61,139,110,0.4);
   z-index: 50;
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .fab:hover {
   transform: scale(1.08);
-  box-shadow: 0 6px 20px rgba(16,185,129,0.5);
+  box-shadow: 0 6px 20px rgba(61,139,110,0.5);
 }
 
 .fab svg {
@@ -1528,8 +1528,8 @@ input:focus, select:focus, textarea:focus {
 .tip-card::before {
   content: '';
   display: block;
-  height: 4px;
-  background: linear-gradient(90deg, var(--emerald) 0%, var(--emerald-dark) 100%);
+  height: 3px;
+  background: linear-gradient(90deg, var(--emerald-dark) 0%, var(--emerald) 40%, rgba(61,139,110,0.15) 100%);
 }
 .tip-card-content { padding: 18px 20px 20px; }
 .tip-card-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
