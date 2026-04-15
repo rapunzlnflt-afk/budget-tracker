@@ -1474,14 +1474,25 @@ input:focus, select:focus, textarea:focus {
   box-shadow: var(--card-shadow);
   padding: 20px;
   transition: box-shadow var(--transition);
+  border-left: 4px solid var(--danger);
 }
+.debt-card.paid-off { border-left-color: var(--success); opacity: 0.85; }
 .debt-card:hover { box-shadow: var(--card-shadow-hover); }
-.debt-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.debt-card-name { font-weight: 600; font-size: 1rem; flex: 1; }
-.debt-card-balance { font-weight: 700; font-size: 1.2rem; color: var(--danger); }
-.debt-card-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 12px; }
-.debt-detail-item { font-size: 0.78rem; color: var(--text-secondary); }
-.debt-detail-item strong { display: block; font-size: 0.92rem; color: var(--text-primary); }
+.debt-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.debt-card-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--danger-light); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.debt-card.paid-off .debt-card-icon { background: var(--success-light); }
+.debt-card-title-group { flex: 1; min-width: 0; }
+.debt-card-name { font-weight: 600; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.debt-card-subtitle { font-size: 0.78rem; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.debt-card-balance { font-weight: 700; font-size: 1.2rem; color: var(--danger); white-space: nowrap; }
+.debt-card.paid-off .debt-card-balance { color: var(--success); }
+.debt-progress { margin-bottom: 12px; }
+.debt-progress-bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; margin-bottom: 5px; }
+.debt-progress-fill { height: 100%; border-radius: 4px; background: var(--emerald); transition: width 0.8s ease; }
+.debt-progress-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); }
+.debt-card-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; padding: 10px; background: var(--bg-secondary); border-radius: var(--radius-sm); }
+.debt-detail-item { font-size: 0.75rem; color: var(--text-secondary); text-align: center; }
+.debt-detail-item strong { display: block; font-size: 0.9rem; color: var(--text-primary); margin-top: 2px; }
 .debt-card-actions { display: flex; gap: 4px; }
 .debt-card-actions button { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted); transition: all var(--transition); }
 .debt-card-actions button:hover { background: var(--bg-secondary); color: var(--text-primary); }
@@ -1491,6 +1502,11 @@ input:focus, select:focus, textarea:focus {
 .debt-payments { margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 10px; }
 .debt-payment-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.82rem; border-bottom: 1px solid var(--border-color); }
 .debt-payment-item:last-child { border-bottom: none; }
+@media (max-width: 480px) {
+  .debt-card-details { grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 8px; }
+  .debt-detail-item { font-size: 0.7rem; }
+  .debt-detail-item strong { font-size: 0.82rem; }
+}
 
 .strategy-toggle { display: flex; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 16px; }
 .strategy-toggle button { flex: 1; padding: 10px 16px; font-weight: 600; font-size: 0.88rem; transition: all var(--transition); color: var(--text-secondary); background: var(--card-bg); }
@@ -3012,20 +3028,24 @@ input:focus, select:focus, textarea:focus {
       const catColor = cat ? cat.color : '#9ca3af';
       const amountClass = t.type === 'income' ? 'income' : 'expense';
       const sign = t.type === 'income' ? '+' : '-';
-      const isBillTxn = !!t.billId;
-      const billBadge = isBillTxn ? '<span style="display:inline-block;font-size:0.65rem;background:var(--accent);color:#fff;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;">bill</span>' : '';
+      const isAutoTxn = !!t.billId || !!t.debtPaymentId;
+      const autoBadge = t.billId
+        ? '<span style="display:inline-block;font-size:0.65rem;background:var(--accent);color:#fff;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;">bill</span>'
+        : t.debtPaymentId
+        ? '<span style="display:inline-block;font-size:0.65rem;background:var(--info);color:#fff;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;">debt</span>'
+        : '';
       return `<div class="full-transaction-item">
         <span class="transaction-cat-dot" style="background:${catColor}"></span>
         <div class="transaction-info">
-          <div class="transaction-desc">${escapeHtml(t.description || catName)}${billBadge}</div>
+          <div class="transaction-desc">${escapeHtml(t.description || catName)}${autoBadge}</div>
           <div class="transaction-meta">${catName} &middot; ${formatDate(t.date)}</div>
         </div>
         <span class="transaction-amount ${amountClass}">${sign}${formatCurrency(t.amount)}</span>
         <div class="full-transaction-actions">
-          ${isBillTxn ? '' : `<button onclick="window._editTxn('${t.id}')" title="Edit">
+          ${isAutoTxn ? '' : `<button onclick="window._editTxn('${t.id}')" title="Edit">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
           </button>`}
-          ${isBillTxn ? '' : `<button class="delete" onclick="window._deleteTxn('${t.id}')" title="Delete">
+          ${isAutoTxn ? '' : `<button class="delete" onclick="window._deleteTxn('${t.id}')" title="Delete">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           </button>`}
         </div>
@@ -3921,20 +3941,32 @@ input:focus, select:focus, textarea:focus {
   // ============================================
   // DEBT PAYOFF
   // ============================================
+  // Debt type icons
+  const DEBT_TYPE_ICONS = {
+    'Credit Card': '\u{1F4B3}',
+    'Student Loan': '\u{1F393}',
+    'Car Loan': '\u{1F697}',
+    'Mortgage': '\u{1F3E0}',
+    'Personal Loan': '\u{1F4B0}',
+    'Medical': '\u{1FA7A}',
+    'Other': '\u{1F4C4}'
+  };
+
   async function refreshDebt() {
     const debts = await dbGetAll('debts');
     const payments = await dbGetAll('debtPayments');
 
     // Stats
     const totalDebt = debts.reduce((s, d) => s + d.balance, 0);
+    const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
     const totalMinPayments = debts.reduce((s, d) => s + d.minimumPayment, 0);
     const highestRate = debts.length > 0 ? Math.max(...debts.map(d => d.interestRate)) : 0;
 
     document.getElementById('debt-stats').innerHTML = `
-      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></div><div><div class="stat-card-label">Total Debt</div><div class="stat-card-value">${formatCurrency(totalDebt)}</div></div></div>
-      <div class="stat-card"><div class="stat-card-icon warning"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4"/></svg></div><div><div class="stat-card-label">Total Min Payments</div><div class="stat-card-value">${formatCurrency(totalMinPayments)}</div></div></div>
-      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><div><div class="stat-card-label">Highest Interest</div><div class="stat-card-value">${highestRate.toFixed(1)}%</div></div></div>
-      <div class="stat-card"><div class="stat-card-icon net"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div><div><div class="stat-card-label">Number of Debts</div><div class="stat-card-value">${debts.length}</div></div></div>`;
+      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></div><div><div class="stat-card-label">Remaining Debt</div><div class="stat-card-value">${formatCurrency(totalDebt)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon income"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><div><div class="stat-card-label">Total Paid</div><div class="stat-card-value">${formatCurrency(totalPaid)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon warning"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4"/></svg></div><div><div class="stat-card-label">Monthly Minimums</div><div class="stat-card-value">${formatCurrency(totalMinPayments)}</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon expense"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><div><div class="stat-card-label">Highest Interest</div><div class="stat-card-value">${highestRate.toFixed(1)}%</div></div></div>`;
 
     // Sort by strategy
     const sorted = [...debts];
@@ -3949,20 +3981,28 @@ input:focus, select:focus, textarea:focus {
 
     const cards = sorted.map((debt, idx) => {
       const debtPayments = payments.filter(p => p.debtId === debt.id).sort((a, b) => b.date.localeCompare(a.date));
+      const paidForDebt = debtPayments.reduce((s, p) => s + p.amount, 0);
+      const originalBalance = debt.balance + paidForDebt;
+      const payoffPct = originalBalance > 0 ? Math.min((paidForDebt / originalBalance) * 100, 100) : 0;
+      const isPaidOff = debt.balance <= 0;
+      const icon = DEBT_TYPE_ICONS[debt.type] || '\u{1F4C4}';
+
       // Estimate months to payoff at minimum payment
       let estMonths = '---';
       if (debt.minimumPayment > 0 && debt.balance > 0) {
         const monthlyRate = debt.interestRate / 100 / 12;
         if (monthlyRate > 0) {
           if (debt.minimumPayment <= debt.balance * monthlyRate) {
-            estMonths = 'Never (payment too low)';
+            estMonths = 'Never (too low)';
           } else {
             const months = Math.ceil(-Math.log(1 - (debt.balance * monthlyRate / debt.minimumPayment)) / Math.log(1 + monthlyRate));
-            estMonths = months + ' months';
+            estMonths = months + ' mo';
           }
         } else {
-          estMonths = Math.ceil(debt.balance / debt.minimumPayment) + ' months';
+          estMonths = Math.ceil(debt.balance / debt.minimumPayment) + ' mo';
         }
+      } else if (isPaidOff) {
+        estMonths = 'Paid off!';
       }
 
       const paymentsHtml = debtPayments.length > 0
@@ -3972,19 +4012,28 @@ input:focus, select:focus, textarea:focus {
           </div>`
         : '';
 
-      return `<div class="debt-card">
+      return `<div class="debt-card${isPaidOff ? ' paid-off' : ''}">
         <div class="debt-card-header">
-          <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-right:4px;">#${idx + 1}</span>
-          <span class="badge badge-type">${escapeHtml(debt.type)}</span>
-          <span class="debt-card-name">${escapeHtml(debt.name)}</span>
-          <span class="debt-card-balance">${formatCurrency(debt.balance)}</span>
+          <div class="debt-card-icon">${icon}</div>
+          <div class="debt-card-title-group">
+            <div class="debt-card-name">${escapeHtml(debt.name)}</div>
+            <div class="debt-card-subtitle">
+              <span class="badge badge-type">${escapeHtml(debt.type)}</span>
+              <span>#${idx + 1} in payoff order</span>
+            </div>
+          </div>
+          <span class="debt-card-balance">${isPaidOff ? 'Paid Off' : formatCurrency(debt.balance)}</span>
           <div class="debt-card-actions">
             <button onclick="window._editDebt('${debt.id}')" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
             <button class="delete" onclick="window._deleteDebt('${debt.id}')" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
           </div>
         </div>
+        <div class="debt-progress">
+          <div class="debt-progress-bar"><div class="debt-progress-fill animate-bar" style="width:${payoffPct}%"></div></div>
+          <div class="debt-progress-info"><span>${formatCurrency(paidForDebt)} paid</span><span>${payoffPct.toFixed(0)}% of ${formatCurrency(originalBalance)}</span></div>
+        </div>
         <div class="debt-card-details">
-          <div class="debt-detail-item">Interest Rate<strong>${debt.interestRate}%</strong></div>
+          <div class="debt-detail-item">Interest<strong>${debt.interestRate}%</strong></div>
           <div class="debt-detail-item">Min Payment<strong>${formatCurrency(debt.minimumPayment)}</strong></div>
           <div class="debt-detail-item">Est. Payoff<strong>${estMonths}</strong></div>
         </div>
@@ -4075,15 +4124,21 @@ input:focus, select:focus, textarea:focus {
   };
 
   window._deleteDebt = async function(id) {
-    const ok = await showConfirm('Delete Debt', 'This will also delete all payments for this debt. Are you sure?');
+    const ok = await showConfirm('Delete Debt', 'This will also delete all payments and linked transactions for this debt. Are you sure?');
     if (ok) {
       await dbDelete('debts', id);
       const payments = await dbGetAll('debtPayments');
       for (const p of payments.filter(p => p.debtId === id)) {
         await dbDelete('debtPayments', p.id);
       }
+      // Remove any auto-created transactions linked to this debt
+      const transactions = await dbGetAll('transactions');
+      for (const t of transactions.filter(t => t.debtId === id)) {
+        await dbDelete('transactions', t.id);
+      }
       showToast('Debt deleted');
       refreshDebt();
+      if (currentPage === 'dashboard') refreshDashboard();
     }
   };
 
@@ -4121,8 +4176,9 @@ input:focus, select:focus, textarea:focus {
 
     if (!debtId || !amount || !date) { showToast('Please fill in all required fields'); return; }
 
+    const paymentId = generateId();
     await dbPut('debtPayments', {
-      id: generateId(), debtId, amount, date, note, createdAt: Date.now()
+      id: paymentId, debtId, amount, date, note, createdAt: Date.now()
     });
 
     // Reduce debt balance
@@ -4133,9 +4189,25 @@ input:focus, select:focus, textarea:focus {
       await dbPut('debts', debt);
     }
 
+    // Sync: create an expense transaction for this debt payment
+    const cats = await dbGetAll('categories');
+    const debtCat = cats.find(c => c.name === 'Debt Payments' && c.type === 'expense');
+    await dbPut('transactions', {
+      id: generateId(),
+      amount,
+      type: 'expense',
+      category: debtCat ? debtCat.id : 'Uncategorized',
+      date,
+      description: (debt ? debt.name : 'Debt') + ' payment' + (note ? ' - ' + note : ''),
+      debtPaymentId: paymentId,
+      debtId: debtId,
+      createdAt: Date.now()
+    });
+
     document.getElementById('modal-debt-payment').classList.remove('open');
     showToast('Payment recorded');
     refreshDebt();
+    if (currentPage === 'dashboard') refreshDashboard();
   });
 
   // ============================================
