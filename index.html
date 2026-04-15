@@ -390,18 +390,18 @@ input:focus, select:focus, textarea:focus {
 
 .page-header {
   background: var(--header-gradient);
-  padding: 32px 32px 28px;
+  padding: 20px 32px 16px;
   color: #fff;
 }
 
 .page-header h2 {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .page-header p {
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   opacity: 0.85;
 }
 
@@ -411,8 +411,8 @@ input:focus, select:focus, textarea:focus {
 
 @media (max-width: 768px) {
   .page-header {
-    padding: 24px 20px 20px;
-    padding-top: 64px;
+    padding: 14px 20px 12px;
+    padding-top: 56px;
   }
   .page-body {
     padding: 16px 16px 40px;
@@ -1473,10 +1473,21 @@ input:focus, select:focus, textarea:focus {
   border-radius: var(--radius);
   box-shadow: var(--card-shadow);
   padding: 20px;
+  padding-left: 24px;
   transition: box-shadow var(--transition);
-  border-left: 4px solid var(--danger);
+  position: relative;
+  overflow: hidden;
 }
-.debt-card.paid-off { border-left-color: var(--success); opacity: 0.85; }
+.debt-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+.debt-card.paid-off { opacity: 0.85; }
+.debt-card.paid-off::before { background: linear-gradient(180deg, var(--emerald) 0%, var(--emerald-dark) 100%); }
 .debt-card:hover { box-shadow: var(--card-shadow-hover); }
 .debt-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .debt-card-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--danger-light); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
@@ -1557,7 +1568,7 @@ input:focus, select:focus, textarea:focus {
     <div class="sidebar-header">
       <div class="sidebar-brand">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
-          <rect width="36" height="36" rx="8" fill="#10b981"/>
+          <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3d8b6e"/><stop offset="100%" stop-color="#2d6b54"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#logoGrad)"/>
           <path d="M18 8c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S23.52 8 18 8zm1 15h-2v-2h2v2zm0-4h-2v-6h2v6z" fill="#fff" opacity="0.3"/>
           <text x="18" y="22" text-anchor="middle" fill="#fff" font-size="14" font-weight="700" font-family="-apple-system,sans-serif">$</text>
         </svg>
