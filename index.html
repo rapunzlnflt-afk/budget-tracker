@@ -1520,14 +1520,20 @@ input:focus, select:focus, textarea:focus {
   background: var(--card-bg);
   border-radius: var(--radius);
   box-shadow: var(--card-shadow);
-  padding: 20px;
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
+  padding: 0;
+  overflow: hidden;
+  transition: box-shadow var(--transition), transform var(--transition);
 }
-.tip-card-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--emerald-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem; }
-.tip-card-content h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
-.tip-card-content p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+.tip-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); }
+.tip-card::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: linear-gradient(90deg, var(--emerald) 0%, var(--emerald-dark) 100%);
+}
+.tip-card-content { padding: 18px 20px 20px; }
+.tip-card-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
+.tip-card-content p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
 
 /* Icon picker */
 .icon-picker { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1878,21 +1884,18 @@ input:focus, select:focus, textarea:focus {
         <div class="bill-list" id="bill-list"></div>
         <div class="tip-grid">
           <div class="tip-card">
-            <div class="tip-card-icon">&#9889;</div>
             <div class="tip-card-content">
               <h4>Automate First</h4>
               <p>Set up auto-pay for fixed bills like rent and insurance. One less thing to forget.</p>
             </div>
           </div>
           <div class="tip-card">
-            <div class="tip-card-icon">&#128197;</div>
             <div class="tip-card-content">
               <h4>Due Date Strategy</h4>
               <p>Try to align bill due dates near your paydays. Most companies let you change due dates with a call.</p>
             </div>
           </div>
           <div class="tip-card">
-            <div class="tip-card-icon">&#128269;</div>
             <div class="tip-card-content">
               <h4>Review Annually</h4>
               <p>Check each bill yearly. Insurance, subscriptions, and utilities often have better rates available.</p>
@@ -1926,21 +1929,18 @@ input:focus, select:focus, textarea:focus {
         <div class="goal-list" id="goal-list"></div>
         <div class="tip-grid">
           <div class="tip-card">
-            <div class="tip-card-icon">&#128176;</div>
             <div class="tip-card-content">
               <h4>Pay Yourself First</h4>
               <p>Treat savings like a bill. Transfer money to your goal the day you get paid, before spending.</p>
             </div>
           </div>
           <div class="tip-card">
-            <div class="tip-card-icon">&#127793;</div>
             <div class="tip-card-content">
               <h4>Start Small</h4>
               <p>Even $25/week adds up to $1,300/year. Consistency beats big one-time deposits.</p>
             </div>
           </div>
           <div class="tip-card">
-            <div class="tip-card-icon">&#128200;</div>
             <div class="tip-card-content">
               <h4>Visualize Progress</h4>
               <p>Watching your progress bar grow is motivating. Check in weekly to stay on track.</p>
