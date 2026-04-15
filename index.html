@@ -1386,6 +1386,233 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* ============================================
+   SETTINGS PAGE
+   ============================================ */
+.settings-section {
+  margin-bottom: 28px;
+}
+
+.settings-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.settings-section-title svg {
+  width: 20px;
+  height: 20px;
+  color: var(--emerald);
+  flex-shrink: 0;
+}
+
+.settings-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+}
+
+.settings-row-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-row-label {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.settings-row-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 0 20px;
+}
+
+.settings-select {
+  width: auto;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.settings-danger-label {
+  color: var(--danger);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.btn-secondary {
+  background: var(--emerald-light);
+  color: var(--emerald-dark);
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background: var(--emerald);
+  color: #fff;
+}
+
+.settings-about {
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.settings-about-brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--emerald);
+  margin-bottom: 2px;
+}
+
+.settings-about-company {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.settings-about-version {
+  display: inline-block;
+  background: var(--emerald-light);
+  color: var(--emerald-dark);
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.settings-about-tagline {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.settings-about-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* Settings mobile responsive */
+@media (max-width: 600px) {
+  .settings-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .settings-select {
+    min-width: 100%;
+  }
+  .btn-danger, .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Settings clear-all-data modal */
+.settings-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.settings-confirm-dialog {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+}
+
+.settings-confirm-dialog h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.settings-confirm-dialog p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.settings-confirm-dialog input {
+  margin-bottom: 16px;
+}
+
+.settings-confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.settings-confirm-actions .btn-cancel {
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.settings-confirm-actions .btn-cancel:hover {
+  background: var(--border-color);
+}
+
+/* ============================================
    EMPTY STATE
    ============================================ */
 .empty-state {
@@ -2222,7 +2449,6 @@ input:focus, select:focus, textarea:focus {
       <button class="sidebar-link" data-page="settings">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         Settings
-        <span class="coming-soon">Soon</span>
       </button>
     </nav>
 
@@ -2751,11 +2977,93 @@ input:focus, select:focus, textarea:focus {
         <p>Customize your budget tracker</p>
       </div>
       <div class="page-body">
-        <div class="coming-soon-page">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <h3>Coming Soon</h3>
-          <p>Currency settings, budget start date, default categories reset, and data management. Coming in Phase 3.</p>
+
+        <!-- Currency -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Currency
+          </h3>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-label">Currency Symbol</div>
+                <div class="settings-row-desc">Choose the currency symbol displayed across the app</div>
+              </div>
+              <select id="settings-currency" class="settings-select">
+                <option value="$">$ (USD)</option>
+                <option value="&euro;">&euro; (EUR)</option>
+                <option value="&pound;">&pound; (GBP)</option>
+                <option value="&yen;">&yen; (JPY/CNY)</option>
+                <option value="&#8377;">&#8377; (INR)</option>
+                <option value="&#8361;">&#8361; (KRW)</option>
+                <option value="&#8369;">&#8369; (PHP)</option>
+                <option value="R$">R$ (BRL)</option>
+                <option value="A$">A$ (AUD)</option>
+                <option value="C$">C$ (CAD)</option>
+              </select>
+            </div>
+          </div>
         </div>
+
+        <!-- Budget Cycle -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Budget Cycle
+          </h3>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-label">Monthly Start Day</div>
+                <div class="settings-row-desc">Day of the month your budget cycle begins (e.g. 15 means the 15th to the 14th of next month)</div>
+              </div>
+              <select id="settings-start-day" class="settings-select">
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Management -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+            Data Management
+          </h3>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-label">Reset Default Categories</div>
+                <div class="settings-row-desc">Restore the default category set. Custom categories will be removed. Existing transactions keep their data but may show as uncategorized.</div>
+              </div>
+              <button class="btn btn-secondary" id="btn-reset-categories">Reset Categories</button>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-label settings-danger-label">Clear All Data</div>
+                <div class="settings-row-desc">Permanently delete all transactions, categories, budgets, bills, savings goals, debts, and settings. This cannot be undone.</div>
+              </div>
+              <button class="btn btn-danger" id="btn-clear-all-data">Clear All Data</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            About
+          </h3>
+          <div class="settings-card settings-about">
+            <div class="settings-about-brand">Budget Tracker</div>
+            <div class="settings-about-company">by CleartrackApps</div>
+            <div class="settings-about-version">Version 1.0</div>
+            <div class="settings-about-tagline">Simple, Private, Offline</div>
+            <div class="settings-about-note">Your data never leaves your device. No accounts, no cloud, no tracking.</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -3193,6 +3501,8 @@ input:focus, select:focus, textarea:focus {
   let reportsYear = new Date().getFullYear();
   let debtStrategy = 'snowball';
   let selectedGoalIcon = '\u{1F4B0}';
+  let currencySymbol = '$';
+  let budgetStartDay = 1;
 
   // ============================================
   // INDEXEDDB
@@ -3306,7 +3616,7 @@ input:focus, select:focus, textarea:focus {
   }
 
   function formatCurrency(amount) {
-    return '$' + Math.abs(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return currencySymbol + Math.abs(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   function formatDate(dateStr) {
@@ -3330,6 +3640,28 @@ input:focus, select:focus, textarea:focus {
     const [y, m] = ym.split('-').map(Number);
     const d = new Date(y, m, 1);
     return d.toISOString().slice(0, 7);
+  }
+
+  function getBudgetPeriod(ym) {
+    const [y, m] = ym.split('-').map(Number);
+    if (budgetStartDay === 1) {
+      // Standard: first to last of the month
+      const start = ym + '-01';
+      const endDate = new Date(y, m, 0); // last day of month m
+      const end = ym + '-' + String(endDate.getDate()).padStart(2, '0');
+      return { start, end };
+    }
+    // Custom start day: from day N of month m to day N-1 of month m+1
+    const startStr = ym + '-' + String(budgetStartDay).padStart(2, '0');
+    const nextM = new Date(y, m, 1); // first of next month
+    const endDay = budgetStartDay - 1;
+    const endStr = nextM.toISOString().slice(0, 7) + '-' + String(endDay).padStart(2, '0');
+    return { start: startStr, end: endStr };
+  }
+
+  function isInBudgetPeriod(dateStr, ym) {
+    const { start, end } = getBudgetPeriod(ym);
+    return dateStr >= start && dateStr <= end;
   }
 
   function showToast(message) {
@@ -3429,6 +3761,7 @@ input:focus, select:focus, textarea:focus {
     else if (page === 'debt') refreshDebt();
     else if (page === 'reports') refreshReports();
     else if (page === 'networth') refreshNetWorth();
+    else if (page === 'settings') refreshSettings();
   }
 
   function updateFAB() {
@@ -4153,7 +4486,7 @@ input:focus, select:focus, textarea:focus {
     const expenseCats = cats.filter(c => (c.type || 'expense') === 'expense');
     const budgets = await dbGetAll('budgets');
     const transactions = await dbGetAll('transactions');
-    const monthTxns = transactions.filter(t => t.date.startsWith(budgetMonth) && t.type === 'expense');
+    const monthTxns = transactions.filter(t => isInBudgetPeriod(t.date, budgetMonth) && t.type === 'expense');
 
     let totalBudget = 0;
     let totalSpent = 0;
@@ -5718,9 +6051,106 @@ input:focus, select:focus, textarea:focus {
   document.getElementById('btn-snapshot-banner').addEventListener('click', takeSnapshot);
 
   // ============================================
+  // SETTINGS
+  // ============================================
+  function loadSettings() {
+    const saved = localStorage.getItem('bt-currency-symbol');
+    if (saved) currencySymbol = saved;
+    const savedDay = localStorage.getItem('bt-budget-start-day');
+    if (savedDay) budgetStartDay = parseInt(savedDay, 10);
+  }
+
+  function refreshSettings() {
+    // Currency dropdown
+    const currencySelect = document.getElementById('settings-currency');
+    currencySelect.value = currencySymbol;
+
+    // Start day dropdown: populate 1-28
+    const daySelect = document.getElementById('settings-start-day');
+    if (daySelect.options.length === 0) {
+      for (let i = 1; i <= 28; i++) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        const suffix = (i % 10 === 1 && i !== 11) ? 'st' : (i % 10 === 2 && i !== 12) ? 'nd' : (i % 10 === 3 && i !== 13) ? 'rd' : 'th';
+        opt.textContent = i + suffix;
+        daySelect.appendChild(opt);
+      }
+    }
+    daySelect.value = budgetStartDay;
+  }
+
+  // Currency change handler
+  document.getElementById('settings-currency').addEventListener('change', function() {
+    currencySymbol = this.value;
+    localStorage.setItem('bt-currency-symbol', currencySymbol);
+    showToast('Currency updated to ' + currencySymbol);
+    // Refresh current visible data if user switches back to another page
+    if (currentPage === 'dashboard') refreshDashboard();
+  });
+
+  // Start day change handler
+  document.getElementById('settings-start-day').addEventListener('change', function() {
+    budgetStartDay = parseInt(this.value, 10);
+    localStorage.setItem('bt-budget-start-day', budgetStartDay);
+    showToast('Budget cycle starts on day ' + budgetStartDay);
+  });
+
+  // Reset default categories
+  document.getElementById('btn-reset-categories').addEventListener('click', function() {
+    if (!confirm('This will delete all custom categories and restore defaults. Transactions linked to custom categories will keep their data but show as \'Uncategorized\'. Continue?')) return;
+    dbClear('categories').then(async () => {
+      for (const cat of DEFAULT_CATEGORIES) {
+        await dbPut('categories', { ...cat, id: generateId() });
+      }
+      showToast('Categories restored to defaults');
+      if (currentPage === 'categories') refreshCategories();
+    });
+  });
+
+  // Clear all data — two-step confirmation
+  document.getElementById('btn-clear-all-data').addEventListener('click', function() {
+    if (!confirm('Are you sure? This will permanently delete ALL your data.')) return;
+
+    // Second step: type DELETE to confirm
+    const overlay = document.createElement('div');
+    overlay.className = 'settings-confirm-overlay';
+    overlay.innerHTML = `
+      <div class="settings-confirm-dialog">
+        <h4>Final Confirmation</h4>
+        <p>Type <strong>DELETE</strong> below to permanently erase all data.</p>
+        <input type="text" id="clear-data-confirm-input" placeholder="Type DELETE" autocomplete="off">
+        <div class="settings-confirm-actions">
+          <button class="btn-cancel" id="clear-data-cancel">Cancel</button>
+          <button class="btn btn-danger" id="clear-data-confirm">Delete Everything</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    document.getElementById('clear-data-cancel').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+    document.getElementById('clear-data-confirm').addEventListener('click', () => {
+      const val = document.getElementById('clear-data-confirm-input').value.trim();
+      if (val !== 'DELETE') {
+        document.getElementById('clear-data-confirm-input').style.borderColor = 'var(--danger)';
+        document.getElementById('clear-data-confirm-input').placeholder = 'You must type DELETE';
+        return;
+      }
+      // Delete everything
+      indexedDB.deleteDatabase(DB_NAME);
+      localStorage.removeItem('bt-currency-symbol');
+      localStorage.removeItem('bt-budget-start-day');
+      localStorage.removeItem('bt-dark-mode');
+      overlay.remove();
+      location.reload();
+    });
+  });
+
+  // ============================================
   // INIT
   // ============================================
   async function init() {
+    loadSettings();
     initDarkMode();
     await openDB();
     await initCategories();
