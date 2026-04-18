@@ -1550,7 +1550,7 @@ input:focus, select:focus, textarea:focus {
   .settings-select {
     min-width: 100%;
   }
-  .btn-danger, .btn-secondary {
+  .settings-row .btn-danger, .settings-row .btn-secondary {
     width: 100%;
     text-align: center;
   }
@@ -1822,6 +1822,14 @@ input:focus, select:focus, textarea:focus {
   transition: box-shadow var(--transition);
 }
 .goal-card:hover { box-shadow: var(--card-shadow-hover); }
+.savings-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.savings-header-btns { display: flex; gap: 8px; }
+.savings-header-btns .btn { flex: 1; white-space: nowrap; }
+@media (max-width: 480px) {
+  .savings-header-row { flex-direction: column; align-items: stretch; }
+  .savings-header-btns { flex-direction: column; }
+  .savings-header-btns .btn { width: 100%; justify-content: center; }
+}
 .goal-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .goal-card-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--emerald-light); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
 .goal-card-title { font-weight: 600; font-size: 1rem; flex: 1; }
@@ -2744,9 +2752,9 @@ input:focus, select:focus, textarea:focus {
       </div>
       <div class="page-body">
         <div class="stat-grid" id="savings-stats"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+        <div class="savings-header-row">
           <div class="card-title" style="margin-bottom:0;">Your Goals</div>
-          <div style="display:flex;gap:8px;">
+          <div class="savings-header-btns">
             <button class="btn btn-secondary" id="btn-add-deposit-top">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               Add Deposit
