@@ -2492,6 +2492,31 @@ input:focus, select:focus, textarea:focus {
         <p>Your monthly financial snapshot</p>
       </div>
       <div class="page-body">
+        <!-- First-visit local-storage notice (one-time) -->
+        <div id="first-visit-notice" class="card" style="display:none;border-left:4px solid var(--primary,#6366f1);background:rgba(99,102,241,0.06);margin-bottom:20px;padding:16px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="font-size:22px;line-height:1;flex-shrink:0;">💾</div>
+            <div style="flex:1;">
+              <p style="font-weight:700;font-size:14px;margin:0 0 4px 0;">Your data lives on this device</p>
+              <p style="font-size:13px;color:var(--text-muted,#64748b);margin:0;line-height:1.5;">Budget Tracker saves everything locally to your phone or browser — nothing is sent to a server. If you uninstall the app or clear your browser data, your records will be lost. <strong>Tap Export every week or two</strong> to save a backup file you can re-import later or move to another device.</p>
+              <button id="first-visit-dismiss" type="button" style="margin-top:10px;padding:7px 14px;background:var(--primary,#6366f1);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Got it</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup reminder banner -->
+        <div id="backup-reminder" class="card" style="display:none;margin-bottom:20px;padding:16px;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div id="backup-reminder-icon" style="font-size:22px;line-height:1;flex-shrink:0;">💾</div>
+            <div style="flex:1;min-width:180px;">
+              <p id="backup-reminder-title" style="font-weight:700;font-size:14px;margin:0 0 2px 0;"></p>
+              <p id="backup-reminder-body" style="font-size:12px;color:var(--text-muted,#64748b);margin:0;line-height:1.4;"></p>
+            </div>
+            <button id="backup-reminder-export" type="button" style="padding:8px 16px;background:var(--primary,#6366f1);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;">Export now</button>
+            <button id="backup-reminder-dismiss" type="button" title="Remind me later" style="padding:6px 10px;background:none;border:none;color:#94a3b8;font-size:18px;cursor:pointer;line-height:1;flex-shrink:0;">×</button>
+          </div>
+        </div>
+
         <div class="month-nav" style="margin-bottom:20px;">
           <button id="dash-prev" aria-label="Previous month">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -5478,7 +5503,7 @@ input:focus, select:focus, textarea:focus {
   // ============================================
   // EXPORT / IMPORT
   // ============================================
-  document.getElementById('btn-export').addEventListener('click', async () => {
+  async function exportBudgetData() {
     const transactions = await dbGetAll('transactions');
     const categories = await dbGetAll('categories');
     const budgets = await dbGetAll('budgets');
@@ -5510,7 +5535,79 @@ input:focus, select:focus, textarea:focus {
     a.click();
     URL.revokeObjectURL(url);
     showToast('Data exported successfully');
+    localStorage.setItem('btLastExport', new Date().toISOString().slice(0,10));
+    localStorage.removeItem('btBackupReminderSnoozed');
+    renderBackupReminder();
+  }
+  document.getElementById('btn-export').addEventListener('click', exportBudgetData);
+
+  // ============================================
+  // BACKUP REMINDER + FIRST-VISIT NOTICE
+  // ============================================
+  function btTodayISO() { return new Date().toISOString().slice(0,10); }
+  async function budgetHasData() {
+    try {
+      const txns = await dbGetAll('transactions');
+      const bills = await dbGetAll('bills');
+      const goals = await dbGetAll('savingsGoals');
+      const debts = await dbGetAll('debts');
+      return (txns && txns.length > 0) || (bills && bills.length > 0) || (goals && goals.length > 0) || (debts && debts.length > 0);
+    } catch(_) { return false; }
+  }
+  async function renderFirstVisitNotice() {
+    const el = document.getElementById('first-visit-notice');
+    if(!el) return;
+    const seen = localStorage.getItem('btSeenWelcome');
+    const hasData = await budgetHasData();
+    el.style.display = (!seen && hasData) ? 'block' : 'none';
+  }
+  const fvDismissBT = document.getElementById('first-visit-dismiss');
+  if(fvDismissBT) fvDismissBT.addEventListener('click', () => {
+    localStorage.setItem('btSeenWelcome', btTodayISO());
+    document.getElementById('first-visit-notice').style.display = 'none';
   });
+  async function renderBackupReminder() {
+    const el = document.getElementById('backup-reminder');
+    if(!el) return;
+    const hasData = await budgetHasData();
+    if(!hasData) { el.style.display = 'none'; return; }
+    let firstSeen = localStorage.getItem('btFirstSeen');
+    if(!firstSeen) { firstSeen = btTodayISO(); localStorage.setItem('btFirstSeen', firstSeen); }
+    const lastExport = localStorage.getItem('btLastExport');
+    const baseline = lastExport || firstSeen;
+    const daysSince = Math.floor((Date.now() - new Date(baseline).getTime()) / 86400000);
+    const snoozed = localStorage.getItem('btBackupReminderSnoozed');
+    if(snoozed === btTodayISO()) { el.style.display = 'none'; return; }
+    if(daysSince < 3) { el.style.display = 'none'; return; }
+    let color, bg, title, body;
+    if(daysSince >= 30) {
+      color = '#dc2626'; bg = 'rgba(220,38,38,0.08)';
+      title = lastExport ? `It's been ${daysSince} days since your last backup` : `You haven't backed up your data yet`;
+      body = `Export now so you don't lose your records if you uninstall the app or clear browser data.`;
+    } else if(daysSince >= 7) {
+      color = '#d97706'; bg = 'rgba(217,119,6,0.08)';
+      title = lastExport ? `Time for a backup — ${daysSince} days since last export` : `Save a backup of your data`;
+      body = `Tap Export to download a backup file you can re-import later or move to another device.`;
+    } else {
+      color = '#6366f1'; bg = 'rgba(99,102,241,0.06)';
+      title = `Save a backup of your data`;
+      body = `It's been ${daysSince} days. Tap Export to keep your records safe.`;
+    }
+    el.style.borderLeft = `4px solid ${color}`;
+    el.style.background = bg;
+    document.getElementById('backup-reminder-title').textContent = title;
+    document.getElementById('backup-reminder-body').textContent = body;
+    document.getElementById('backup-reminder-export').style.background = color;
+    el.style.display = 'block';
+  }
+  const brExportBT = document.getElementById('backup-reminder-export');
+  if(brExportBT) brExportBT.addEventListener('click', exportBudgetData);
+  const brDismissBT = document.getElementById('backup-reminder-dismiss');
+  if(brDismissBT) brDismissBT.addEventListener('click', () => {
+    localStorage.setItem('btBackupReminderSnoozed', btTodayISO());
+    document.getElementById('backup-reminder').style.display = 'none';
+  });
+  setTimeout(() => { renderBackupReminder(); renderFirstVisitNotice(); }, 800);
 
   document.getElementById('btn-import').addEventListener('click', () => {
     document.getElementById('import-file-input').click();
