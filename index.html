@@ -3216,6 +3216,36 @@ input:focus, select:focus, textarea:focus {
   </div>
 </div>
 
+   <!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="modal-onboarding">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-body">
+      <!-- Step 1: Welcome -->
+      <div id="onboard-step-1">
+        <h3 style="margin-bottom:8px;">Welcome to Budget Tracker</h3>
+        <p style="color:var(--text-muted);margin-bottom:16px;">Track your spending and savings the simple way. Your data stays on this device only — no accounts, no cloud, fully private.</p>
+        <button type="button" class="btn btn-primary btn-block" id="onboard-start">Get started</button>
+        <button type="button" class="btn btn-secondary btn-block" id="onboard-skip" style="margin-top:8px;">Skip for now</button>
+      </div>
+      <!-- Step 2: Basics -->
+      <div id="onboard-step-2" style="display:none;">
+        <h3 style="margin-bottom:8px;">A couple of basics</h3>
+        <p style="color:var(--text-muted);margin-bottom:16px;">Optional — you can change these anytime in Settings.</p>
+        <div class="form-group">
+          abel for="onboard-currency">Currency symbol</label>
+          <input type="text" id="onboard-currency" maxlength="3" placeholder="$" style="width:80px;">
+        </div>
+        <div class="form-group">
+          abel for="onboard-income">Monthly income (optional)</label>
+          <input type="number" id="onboard-income" step="0.01" min="0" placeholder="0.00">
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="onboard-finish">Finish setup</button>
+        <button type="button" class="btn btn-secondary btn-block" id="onboard-back" style="margin-top:8px;">Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+   
 <!-- ==========================================
      CATEGORY MODAL
      ========================================== -->
@@ -6585,13 +6615,61 @@ input:focus, select:focus, textarea:focus {
   // ============================================
   // INIT
   // ============================================
-  async function init() {
-    loadSettings();
-    initDarkMode();
-    await openDB();
-    await initCategories();
+  // ONBOARDING
+function showOnboardStep(step) {
+  document.getElementById('onboard-step-1').style.display = step === 1 ? 'block' : 'none';
+  document.getElementById('onboard-step-2').style.display = step === 2 ? 'block' : 'none';
+}
+function finishOnboarding() {
+  localStorage.setItem('bt-onboarded', '1');
+  document.getElementById('modal-onboarding').classList.remove('open');
+}
+function initOnboarding() {
+  if (localStorage.getItem('bt-onboarded')) return;
+  showOnboardStep(1);
+  document.getElementById('modal-onboarding').classList.add('open');
+
+  document.getElementById('onboard-start').addEventListener('click', () => showOnboardStep(2));
+  document.getElementById('onboard-back').addEventListener('click', () => showOnboardStep(1));
+  document.getElementById('onboard-skip').addEventListener('click', finishOnboarding);
+
+  document.getElementById('onboard-finish').addEventListener('click', async () => {
+    const currency = document.getElementById('onboard-currency').value.trim();
+    const income = parseFloat(document.getElementById('onboard-income').value);
+    if (currency) {
+      currencySymbol = currency;
+      localStorage.setItem('bt-currency-symbol', currency);
+    }
+    if (income && income > 0) {
+      let salaryId = '';
+      try {
+        const cats = await getCategoriesList();
+        const salary = cats.find(c => c.type === 'income' && c.name.toLowerCase() === 'salary');
+        salaryId = salary ? salary.id : (cats.find(c => c.type === 'income') || {}).id || '';
+      } catch (e) {}
+      await dbPut('transactions', {
+        id: generateId(),
+        amount: income,
+        type: 'income',
+        category: salaryId,
+        date: new Date().toISOString().slice(0, 10),
+        description: 'Monthly income',
+        createdAt: Date.now()
+      });
+    }
+    finishOnboarding();
     refreshDashboard();
-  }
+  });
+}
+   
+       async function init() {
+      loadSettings();
+      initDarkMode();
+      await openDB();
+      await initCategories();
+      refreshDashboard();
+      initOnboarding();
+    }
 
   init().catch(err => console.error('Init error:', err));
 
