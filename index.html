@@ -2632,10 +2632,16 @@ input:focus, select:focus, textarea:focus {
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
             <div class="card-title" style="margin-bottom:0;">All Transactions</div>
-            <button class="btn btn-primary" id="btn-add-txn">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              Add Transaction
-            </button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+              <button class="btn btn-secondary" id="btn-import-txn" title="Import transactions from a bank CSV file">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                Quick Import
+              </button>
+              <button class="btn btn-primary" id="btn-add-txn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Add Transaction
+              </button>
+            </div>
           </div>
           <div class="filter-bar">
             <input type="text" id="txn-search" placeholder="Search transactions...">
@@ -3149,6 +3155,63 @@ input:focus, select:focus, textarea:focus {
         </div>
         <button type="submit" class="btn btn-primary btn-block" id="txn-submit-btn">Add Transaction</button>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     QUICK IMPORT MODAL
+     ========================================== -->
+<div class="modal-overlay" id="modal-import-transactions">
+  <div class="modal" style="max-width:980px;width:min(980px,calc(100vw - 24px));">
+    <div class="modal-header">
+      <h3>Quick Import Transactions</h3>
+      <button class="modal-close" id="import-modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="import-step-upload">
+        <div class="empty-state" style="padding:18px;border:1px dashed var(--border);border-radius:14px;margin-bottom:16px;">
+          <h4>Import a bank CSV file</h4>
+          <p>Your file is processed on this device only. Review everything before anything is added.</p>
+        </div>
+        <div class="form-group">
+          <label for="import-csv-file">Choose CSV file</label>
+          <input type="file" id="import-csv-file" accept=".csv,text/csv">
+        </div>
+        <div class="form-group">
+          <label for="import-paste-box">Or paste CSV rows</label>
+          <textarea id="import-paste-box" rows="5" placeholder="Date,Description,Amount&#10;2026-06-01,Example Grocery,-42.18" style="width:100%;border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--card-bg);color:var(--text);font-family:inherit;"></textarea>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="btn-import-parse">Preview Transactions</button>
+      </div>
+      <div id="import-step-preview" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <div>
+            <div class="card-title" style="margin-bottom:2px;">Review before importing</div>
+            <p id="import-summary" style="font-size:0.85rem;color:var(--text-muted);margin:0;"></p>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btn-import-back">Choose Different File</button>
+        </div>
+        <div style="overflow:auto;border:1px solid var(--border);border-radius:12px;max-height:420px;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;min-width:760px;">
+            <thead style="background:var(--bg);position:sticky;top:0;z-index:1;">
+              <tr>
+                <th style="padding:10px;text-align:left;"><input type="checkbox" id="import-select-all" checked></th>
+                <th style="padding:10px;text-align:left;">Date</th>
+                <th style="padding:10px;text-align:left;">Description</th>
+                <th style="padding:10px;text-align:left;">Type</th>
+                <th style="padding:10px;text-align:right;">Amount</th>
+                <th style="padding:10px;text-align:left;">Category</th>
+                <th style="padding:10px;text-align:left;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="import-preview-body"></tbody>
+          </table>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="btn-import-save" style="margin-top:14px;">Import Selected Transactions</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4310,6 +4373,250 @@ input:focus, select:focus, textarea:focus {
     else openTransactionModal();
   });
   document.getElementById('btn-add-txn').addEventListener('click', () => openTransactionModal());
+
+
+  // Quick Import: CSV preview + approval workflow
+  let importRows = [];
+  let importCategories = [];
+  const IMPORT_CATEGORY_KEYWORDS = {
+    'Groceries': ['grocery','groceries','kroger','walmart','target','aldi','costco','trader joe','heb','h-e-b','whole foods','market'],
+    'Dining Out': ['restaurant','starbucks','mcdonald','chick-fil-a','taco','pizza','burger','doordash','uber eats','grubhub','coffee','dining'],
+    'Transportation': ['gas','fuel','shell','chevron','exxon','valero','bp','uber','lyft','parking','toll','auto','car wash'],
+    'Utilities': ['electric','water','utility','utilities','internet','phone','verizon','att','at&t','tmobile','spectrum','xfinity','comcast'],
+    'Housing': ['rent','mortgage','apartment','hoa','property tax'],
+    'Subscriptions': ['netflix','hulu','spotify','apple','icloud','youtube','prime','subscription','patreon'],
+    'Healthcare': ['pharmacy','cvs','walgreens','doctor','clinic','medical','dentist','vision','hospital'],
+    'Insurance': ['insurance','state farm','geico','progressive','allstate','farmers'],
+    'Personal Care': ['salon','spa','barber','beauty','ulta','sephora'],
+    'Entertainment': ['movie','cinema','ticket','game','steam','amc','regal'],
+    'Salary': ['payroll','salary','direct deposit','paycheck'],
+    'Interest': ['interest paid','interest credit'],
+    'Other Income': ['deposit','refund','reimbursement']
+  };
+
+  function openImportModal() {
+    importRows = [];
+    const fileInput = document.getElementById('import-csv-file');
+    const pasteBox = document.getElementById('import-paste-box');
+    if (fileInput) fileInput.value = '';
+    if (pasteBox) pasteBox.value = '';
+    document.getElementById('import-step-upload').style.display = 'block';
+    document.getElementById('import-step-preview').style.display = 'none';
+    document.getElementById('modal-import-transactions').classList.add('open');
+  }
+
+  function closeImportModal() {
+    document.getElementById('modal-import-transactions').classList.remove('open');
+  }
+
+  function splitCSVLine(line) {
+    const result = [];
+    let value = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      const next = line[i + 1];
+      if (ch === '"' && inQuotes && next === '"') { value += '"'; i++; }
+      else if (ch === '"') inQuotes = !inQuotes;
+      else if (ch === ',' && !inQuotes) { result.push(value.trim()); value = ''; }
+      else value += ch;
+    }
+    result.push(value.trim());
+    return result;
+  }
+
+  function parseCSVText(text) {
+    return String(text || '')
+      .replace(/^\uFEFF/, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .split('\n')
+      .filter(line => line.trim() !== '')
+      .map(splitCSVLine);
+  }
+
+  function normalizeImportHeader(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  function findImportColumn(headers, names) {
+    const normalized = headers.map(normalizeImportHeader);
+    for (const name of names) {
+      const idx = normalized.findIndex(h => h.includes(name));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  }
+
+  function parseImportAmount(value) {
+    if (value === undefined || value === null) return 0;
+    let cleaned = String(value).replace(/[$,]/g, '').trim();
+    const isParenNegative = cleaned.startsWith('(') && cleaned.endsWith(')');
+    cleaned = cleaned.replace(/[()]/g, '');
+    const num = parseFloat(cleaned);
+    if (Number.isNaN(num)) return 0;
+    return isParenNegative ? -Math.abs(num) : num;
+  }
+
+  function normalizeImportDate(value) {
+    const raw = String(value || '').trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+    const slash = raw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if (slash) {
+      const year = slash[3].length === 2 ? '20' + slash[3] : slash[3];
+      return `${year}-${slash[1].padStart(2, '0')}-${slash[2].padStart(2, '0')}`;
+    }
+    const parsed = new Date(raw);
+    if (!Number.isNaN(parsed.getTime())) return parsed.toISOString().slice(0, 10);
+    return '';
+  }
+
+  function importFingerprint(txn) {
+    return `${txn.date}|${String(txn.description || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40)}|${Number(txn.amount || 0).toFixed(2)}|${txn.type}`;
+  }
+
+  function guessImportCategory(description, type, cats) {
+    const text = String(description || '').toLowerCase();
+    const typeCats = cats.filter(c => c.type === type);
+    for (const [catName, words] of Object.entries(IMPORT_CATEGORY_KEYWORDS)) {
+      if (!words.some(word => text.includes(word))) continue;
+      const found = typeCats.find(c => c.name.toLowerCase() === catName.toLowerCase());
+      if (found) return found.id;
+    }
+    const fallbackName = type === 'income' ? 'Other Income' : 'Misc';
+    const fallback = typeCats.find(c => c.name.toLowerCase() === fallbackName.toLowerCase());
+    return fallback ? fallback.id : (typeCats[0] ? typeCats[0].id : '');
+  }
+
+  async function buildImportPreview(csvText) {
+    try {
+      const parsed = parseCSVText(csvText);
+      if (parsed.length < 2) { showToast('No CSV rows found'); return; }
+      const headers = parsed[0];
+      let dateIdx = findImportColumn(headers, ['date','posted','transactiondate','postingdate']);
+      let descIdx = findImportColumn(headers, ['description','merchant','payee','name','memo','details']);
+      let amountIdx = findImportColumn(headers, ['amount','transactionamount']);
+      let debitIdx = findImportColumn(headers, ['debit','withdrawal','charge','paidout']);
+      let creditIdx = findImportColumn(headers, ['credit','deposit','paidin']);
+
+      // If headers are unusual, fall back to the common 3-column format:
+      // Date, Description, Amount
+      if (dateIdx === -1 && headers.length >= 3) dateIdx = 0;
+      if (descIdx === -1 && headers.length >= 3) descIdx = 1;
+      if (amountIdx === -1 && debitIdx === -1 && creditIdx === -1 && headers.length >= 3) amountIdx = 2;
+
+      if (dateIdx === -1 || descIdx === -1 || (amountIdx === -1 && debitIdx === -1 && creditIdx === -1)) {
+        showToast('Could not detect date, description, and amount columns');
+        return;
+      }
+
+      if (!db) { showToast('Open this file directly in a browser or GitHub Pages first'); return; }
+      let cats = await getCategoriesList();
+      if (!cats || cats.length === 0) {
+        for (const cat of DEFAULT_CATEGORIES) await dbPut('categories', { ...cat, id: generateId() });
+        cats = await getCategoriesList();
+      }
+      importCategories = cats;
+
+      const existing = await dbGetAll('transactions');
+      const existingFingerprints = new Set(existing.map(importFingerprint));
+      importRows = parsed.slice(1).map((cells, index) => {
+        const date = normalizeImportDate(cells[dateIdx]);
+        const description = cells[descIdx] || 'Imported transaction';
+        let amount = amountIdx !== -1 ? parseImportAmount(cells[amountIdx]) : 0;
+        if (!amount && (debitIdx !== -1 || creditIdx !== -1)) {
+          const debit = debitIdx !== -1 ? Math.abs(parseImportAmount(cells[debitIdx])) : 0;
+          const credit = creditIdx !== -1 ? Math.abs(parseImportAmount(cells[creditIdx])) : 0;
+          amount = credit ? credit : -debit;
+        }
+        const type = amount >= 0 ? 'income' : 'expense';
+        const cleanAmount = Math.abs(amount);
+        const row = { id: generateId(), rowIndex: index, selected: !!date && cleanAmount > 0, date, description, type, amount: cleanAmount, category: guessImportCategory(description, type, importCategories), createdAt: Date.now() + index };
+        row.isDuplicate = existingFingerprints.has(importFingerprint(row));
+        if (row.isDuplicate) row.selected = false;
+        return row;
+      }).filter(row => row.date && row.amount > 0);
+      if (importRows.length === 0) { showToast('No valid transactions found in that CSV'); return; }
+      renderImportPreview();
+    } catch (err) {
+      console.error('Quick Import preview failed:', err);
+      showToast('Preview failed: ' + (err && err.message ? err.message : 'unknown error'));
+    }
+  }
+
+  function renderImportPreview() {
+    const tbody = document.getElementById('import-preview-body');
+    const selectedCount = importRows.filter(r => r.selected).length;
+    const duplicateCount = importRows.filter(r => r.isDuplicate).length;
+    document.getElementById('import-summary').textContent = `${importRows.length} rows found • ${selectedCount} selected • ${duplicateCount} possible duplicates`;
+    document.getElementById('import-step-upload').style.display = 'none';
+    document.getElementById('import-step-preview').style.display = 'block';
+    tbody.innerHTML = importRows.map((row, idx) => {
+      const cats = importCategories.filter(c => c.type === row.type).map(c => `<option value="${c.id}" ${c.id === row.category ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('');
+      const status = row.isDuplicate ? '<span style="color:var(--warning);font-weight:700;">Possible duplicate</span>' : '<span style="color:var(--success);font-weight:700;">Ready</span>';
+      return `<tr style="border-top:1px solid var(--border);opacity:${row.selected ? '1' : '0.58'};">
+        <td style="padding:8px;"><input type="checkbox" data-import-check="${idx}" ${row.selected ? 'checked' : ''}></td>
+        <td style="padding:8px;"><input type="date" data-import-date="${idx}" value="${row.date}" style="width:135px;"></td>
+        <td style="padding:8px;"><input type="text" data-import-desc="${idx}" value="${escapeHtml(row.description)}" style="width:220px;"></td>
+        <td style="padding:8px;"><select data-import-type="${idx}"><option value="expense" ${row.type === 'expense' ? 'selected' : ''}>Expense</option><option value="income" ${row.type === 'income' ? 'selected' : ''}>Income</option></select></td>
+        <td style="padding:8px;text-align:right;"><input type="number" step="0.01" min="0.01" data-import-amount="${idx}" value="${row.amount}" style="width:105px;text-align:right;"></td>
+        <td style="padding:8px;"><select data-import-cat="${idx}" style="width:150px;">${cats}</select></td>
+        <td style="padding:8px;">${status}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function syncImportRowsFromPreview() {
+    importRows.forEach((row, idx) => {
+      row.selected = document.querySelector(`[data-import-check="${idx}"]`)?.checked || false;
+      row.date = document.querySelector(`[data-import-date="${idx}"]`)?.value || row.date;
+      row.description = document.querySelector(`[data-import-desc="${idx}"]`)?.value.trim() || row.description;
+      row.type = document.querySelector(`[data-import-type="${idx}"]`)?.value || row.type;
+      row.amount = parseFloat(document.querySelector(`[data-import-amount="${idx}"]`)?.value || row.amount);
+      row.category = document.querySelector(`[data-import-cat="${idx}"]`)?.value || row.category;
+    });
+  }
+
+  document.getElementById('btn-import-txn').addEventListener('click', openImportModal);
+  document.getElementById('import-modal-close').addEventListener('click', closeImportModal);
+  document.getElementById('modal-import-transactions').addEventListener('click', e => { if (e.target === e.currentTarget) closeImportModal(); });
+  document.getElementById('btn-import-back').addEventListener('click', () => { document.getElementById('import-step-upload').style.display = 'block'; document.getElementById('import-step-preview').style.display = 'none'; });
+  document.getElementById('btn-import-parse').addEventListener('click', async () => {
+    try {
+      const file = document.getElementById('import-csv-file').files[0];
+      const pasted = document.getElementById('import-paste-box').value.trim();
+      if (pasted) { await buildImportPreview(pasted); return; }
+      if (!file) { showToast('Choose a CSV file or paste CSV rows'); return; }
+      const csvText = await file.text();
+      await buildImportPreview(csvText);
+    } catch (err) {
+      console.error('Quick Import read failed:', err);
+      showToast('Import preview blocked in this viewer. Open the HTML file directly in a browser.');
+    }
+  });
+  document.getElementById('import-select-all').addEventListener('change', e => { importRows.forEach(row => { if (!row.isDuplicate) row.selected = e.target.checked; }); renderImportPreview(); });
+  document.getElementById('import-preview-body').addEventListener('change', e => {
+    syncImportRowsFromPreview();
+    if (e.target.matches('[data-import-type]')) {
+      const idx = parseInt(e.target.dataset.importType, 10);
+      importRows[idx].category = guessImportCategory(importRows[idx].description, importRows[idx].type, importCategories);
+      renderImportPreview();
+    } else if (e.target.matches('[data-import-check]')) renderImportPreview();
+  });
+  document.getElementById('btn-import-save').addEventListener('click', async () => {
+    syncImportRowsFromPreview();
+    const rowsToSave = importRows.filter(r => r.selected && r.date && r.amount > 0 && r.category);
+    if (rowsToSave.length === 0) { showToast('No valid transactions selected'); return; }
+    for (const row of rowsToSave) {
+      await dbPut('transactions', { id: generateId(), amount: row.amount, type: row.type, category: row.category, date: row.date, description: row.description, createdAt: Date.now() });
+    }
+    closeImportModal();
+    showToast(`${rowsToSave.length} transactions imported`);
+    if (currentPage === 'transactions') refreshTransactions();
+    else if (currentPage === 'dashboard') refreshDashboard();
+    else if (currentPage === 'budget') refreshBudget();
+    else if (currentPage === 'categories') refreshCategories();
+  });
 
   // Global edit/delete
   window._editTxn = async function(id) {
