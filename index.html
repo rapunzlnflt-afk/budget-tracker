@@ -3239,6 +3239,20 @@ input:focus, select:focus, textarea:focus {
           <label for="onboard-income">Monthly income (optional)</label>
           <input type="number" id="onboard-income" step="0.01" min="0" placeholder="0.00">
         </div>
+                 <div class="form-group">
+          abel for="onboard-start-day">Budget cycle start day</label>
+          <select id="onboard-start-day">
+            <option value="1">1st of the month (default)</option>
+            <option value="15">15th</option>
+            <option value="25">25th</option>
+          </select>
+        </div>
+        <div class="form-group">
+          abel style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="onboard-demo" style="width:auto;">
+            Load demo data so I can explore the app
+          </label>
+        </div>
         <button type="button" class="btn btn-primary btn-block" id="onboard-finish">Finish setup</button>
         <button type="button" class="btn btn-secondary btn-block" id="onboard-back" style="margin-top:8px;">Back</button>
       </div>
@@ -6624,7 +6638,31 @@ function finishOnboarding() {
   localStorage.setItem('bt-onboarded', '1');
   document.getElementById('modal-onboarding').classList.remove('open');
 }
-function initOnboarding() {
+async function loadDemoData() {
+  const cats = await getCategoriesList();
+  const byName = (n, type) => {
+    const c = cats.find(c => c.type === type && c.name.toLowerCase() === n.toLowerCase());
+    return c ? c.id : '';
+  };
+  const today = new Date();
+  const d = (daysAgo) => new Date(today.getTime() - daysAgo * 86400000).toISOString().slice(0, 10);
+  const demo = [
+    { amount: 3200, type: 'income',  cat: byName('Salary', 'income'),          date: d(20), desc: 'Demo paycheck' },
+    { amount: 86.40, type: 'expense', cat: byName('Groceries', 'expense'),      date: d(18), desc: 'Demo grocery run' },
+    { amount: 45.00, type: 'expense', cat: byName('Transportation', 'expense'), date: d(15), desc: 'Demo gas fill-up' },
+    { amount: 15.99, type: 'expense', cat: byName('Subscriptions', 'expense'),  date: d(12), desc: 'Demo streaming' },
+    { amount: 52.30, type: 'expense', cat: byName('Dining Out', 'expense'),     date: d(8),  desc: 'Demo dinner out' },
+    { amount: 120.00, type: 'expense', cat: byName('Utilities', 'expense'),     date: d(5),  desc: 'Demo electric bill' }
+  ];
+  let i = 0;
+  for (const t of demo) {
+    await dbPut('transactions', {
+      id: generateId(), amount: t.amount, type: t.type, category: t.cat,
+      date: t.date, description: t.desc, createdAt: Date.now() + (i++), isDemo: true
+    });
+  }
+}
+   function initOnboarding() {
   if (localStorage.getItem('bt-onboarded')) return;
   showOnboardStep(1);
   document.getElementById('modal-onboarding').classList.add('open');
@@ -6633,12 +6671,18 @@ function initOnboarding() {
   document.getElementById('onboard-back').addEventListener('click', () => showOnboardStep(1));
   document.getElementById('onboard-skip').addEventListener('click', finishOnboarding);
 
-  document.getElementById('onboard-finish').addEventListener('click', async () => {
+    document.getElementById('onboard-finish').addEventListener('click', async () => {
     const currency = document.getElementById('onboard-currency').value.trim();
     const income = parseFloat(document.getElementById('onboard-income').value);
+    const startDay = parseInt(document.getElementById('onboard-start-day').value, 10);
+    const wantDemo = document.getElementById('onboard-demo').checked;
     if (currency) {
       currencySymbol = currency;
       localStorage.setItem('bt-currency-symbol', currency);
+    }
+    if (startDay && !Number.isNaN(startDay)) {
+      budgetStartDay = startDay;
+      localStorage.setItem('bt-budget-start-day', startDay);
     }
     if (income && income > 0) {
       let salaryId = '';
@@ -6648,14 +6692,16 @@ function initOnboarding() {
         salaryId = salary ? salary.id : (cats.find(c => c.type === 'income') || {}).id || '';
       } catch (e) {}
       await dbPut('transactions', {
-        id: generateId(),
-        amount: income,
-        type: 'income',
-        category: salaryId,
-        date: new Date().toISOString().slice(0, 10),
-        description: 'Monthly income',
-        createdAt: Date.now()
+        id: generateId(), amount: income, type: 'income', category: salaryId,
+        date: new Date().toISOString().slice(0, 10), description: 'Monthly income', createdAt: Date.now()
       });
+    }
+    if (wantDemo) {
+      try { await loadDemoData(); } catch (e) { console.error('Demo data failed:', e); }
+    }
+    finishOnboarding();
+    refreshDashboard();
+  });
     }
     finishOnboarding();
     refreshDashboard();
