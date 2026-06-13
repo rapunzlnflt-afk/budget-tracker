@@ -6663,6 +6663,12 @@ async function loadDemoData() {
   }
 }
    function initOnboarding() {
+      window.resetOnboarding = function () {
+         localStorage.removeItem('bt-onboarded');
+         localStorage.removeItem('bt-currency-symbol');
+         localStorage.removeItem('bt-budget-start-day');
+         location.reload();
+         };
   if (localStorage.getItem('bt-onboarded')) return;
   showOnboardStep(1);
   document.getElementById('modal-onboarding').classList.add('open');
