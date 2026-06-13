@@ -3076,6 +3076,14 @@ input:focus, select:focus, textarea:focus {
               </div>
               <button class="btn btn-secondary" id="btn-reset-categories">Reset Categories</button>
             </div>
+             <div class="settings-divider"></div>
+             <div class="settings-row">
+                <div class="settings-row-info">
+                   <div class="settings-row-label">Load Demo Data</div>
+                   <div class="settings-row-desc">Add sample income and expense transactions so you can explore the app.</div>
+                   </div>
+                <button class="btn btn-secondary" id="btn-load-demo">Load Demo Data</button>
+                </div>
             <div class="settings-divider"></div>
             <div class="settings-row">
               <div class="settings-row-info">
@@ -6573,8 +6581,18 @@ input:focus, select:focus, textarea:focus {
     budgetStartDay = parseInt(this.value, 10);
     localStorage.setItem('bt-budget-start-day', budgetStartDay);
     showToast('Budget cycle starts on day ' + budgetStartDay);
-  });
-
+     });
+  // Load demo data (from Settings)
+     document.getElementById('btn-load-demo').addEventListener('click', async function () {
+        try {
+           await loadDemoData();
+           if (typeof showToast === 'function') showToast('Demo data loaded');
+           if (currentPage === 'dashboard') refreshDashboard();
+           } catch (e) {
+           console.error('Load demo data failed:', e);
+           }
+        });
+  
   // Reset default categories
   document.getElementById('btn-reset-categories').addEventListener('click', function() {
     if (!confirm('This will delete all custom categories and restore defaults. Transactions linked to custom categories will keep their data but show as \'Uncategorized\'. Continue?')) return;
