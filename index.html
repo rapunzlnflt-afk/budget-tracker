@@ -2450,6 +2450,10 @@ input:focus, select:focus, textarea:focus {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
         Net Worth
       </button>
+       <button class="sidebar-link" data-page="importguide">
+       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">ircle cx="12" cy="12" r="10"></circle>e x1="12" y1="16" x2="12" y2="12"></line>e x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+       Import Guide
+     </button>
 
       <!-- SETTINGS -->
       <div class="sidebar-section">Settings</div>
@@ -3110,7 +3114,87 @@ input:focus, select:focus, textarea:focus {
 
       </div>
     </div>
+<div class="page" id="page-importguide">
+  <div class="page-header">
+    <h2>Import Guide</h2>
+    <p>How to bring your bank transactions into Budget Tracker</p>
+  </div>
+  <div class="page-body">
 
+    <!-- What files work -->
+    <div class="settings-section">
+      <div class="settings-section-title"><h3>Which files can the app read?</h3></div>
+      <p style="margin-bottom:12px;color:var(--text-muted,#6b7280)">
+        Budget Tracker reads the most common bank export formats. Your file is processed
+        entirely on your device — nothing is uploaded.
+      </p>
+      <ul style="line-height:1.9;padding-left:20px">
+        ><strong>CSV</strong> (.csv) — the most widely supported format. Recommended.</li>
+        ><strong>OFX / QFX</strong> (.ofx, .qfx) — "Quicken / Money / Microsoft Money" exports.</li>
+      </ul>
+      <p style="margin-top:14px;padding:12px;border-radius:8px;background:rgba(245,158,11,0.12);color:#92400e">
+        <strong>Note:</strong> PDF statements <strong>cannot</strong> be imported. Most statements
+        saved from a bank app are PDFs. Look for a <em>"Download / Export transactions"</em> option
+        and choose CSV instead of saving the PDF statement.
+      </p>
+    </div>
+
+    <!-- CSV format -->
+    <div class="settings-section">
+      <div class="settings-section-title"><h3>What the CSV should look like</h3></div>
+      <p style="margin-bottom:10px;color:var(--text-muted,#6b7280)">
+        The app looks for <strong>Date</strong>, <strong>Description</strong>, and
+        <strong>Amount</strong> columns. A header row is recommended but the app will try to detect
+        columns either way. Negative amounts are treated as expenses; positive amounts as income.
+      </p>
+      <pre style="background:#1f2937;color:#e5e7eb;padding:14px;border-radius:8px;overflow:auto;font-size:13px">Date,Description,Amount
+2026-06-01,Example Grocery,-42.18
+2026-06-03,Freelance Payment,500.00</pre>
+    </div>
+
+    <!-- How to import -->
+    <div class="settings-section">
+      <div class="settings-section-title"><h3>How to import — step by step</h3></div>
+      <ol style="line-height:1.9;padding-left:20px">
+        >Go to <strong>Transactions</strong> and click <strong>Quick Import</strong>.</li>
+        >Click <strong>Choose File</strong> and pick your CSV/OFX file — or paste rows into the
+            "Or paste CSV rows" box.</li>
+        >Click <strong>Preview Transactions</strong>.</li>
+        >Review the table: check the auto-detected <strong>Type</strong>, <strong>Amount</strong>,
+            and <strong>Category</strong>, and uncheck anything you don't want. Likely duplicates are
+            flagged automatically.</li>
+        >Click <strong>Import Selected Transactions</strong>. Done.</li>
+      </ol>
+    </div>
+
+    <!-- Getting a CSV from common sources -->
+    <div class="settings-section">
+      <div class="settings-section-title"><h3>Getting a CSV from your bank / phone</h3></div>
+      <ul style="line-height:1.9;padding-left:20px">
+        ><strong>From a bank website:</strong> open an account, find "Download" or "Export," choose
+            a date range, and select <strong>CSV</strong> (sometimes called "Spreadsheet" or
+            "Comma delimited").</li>
+        ><strong>On iPhone:</strong> a statement saved to the Files app is usually a PDF and won't
+            import. Use your bank app/website's "Export transactions → CSV" instead, save it to Files,
+            then choose it in Quick Import.</li>
+        ><strong>Only have a PDF?</strong> Convert it to CSV first, or manually paste rows in the
+            de>Date,Description,Amount</code> format shown above.</li>
+      </ul>
+    </div>
+
+    <!-- Tips -->
+    <div class="settings-section">
+      <div class="settings-section-title"><h3>Tips &amp; troubleshooting</h3></div>
+      <ul style="line-height:1.9;padding-left:20px">
+        >Everything stays on your device — imports are private and offline.</li>
+        >If categories look wrong, you can change them per-row in the preview before importing.</li>
+        >If amounts import with the wrong sign, check that expenses are negative in your file.</li>
+        >Re-importing the same file is safe — duplicates are detected and flagged so you can skip them.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
   </main>
 
   <!-- ========== FAB (Quick Add) ========== -->
@@ -3907,6 +3991,7 @@ input:focus, select:focus, textarea:focus {
     else if (page === 'reports') refreshReports();
     else if (page === 'networth') refreshNetWorth();
     else if (page === 'settings') refreshSettings();
+    else if (page === 'importguide') { /* static page, nothing to refresh */ }
   }
 
   function updateFAB() {
