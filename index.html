@@ -4541,11 +4541,11 @@ input:focus, select:focus, textarea:focus {
     return '';
 }
 
-  function importFingerprint(txn) {
+  function getCategoryRules() { try { return JSON.parse(localStorage.getItem('importCategoryRules') || '[]'); } catch (e) { return []; } } function saveCategoryRules(rules) { localStorage.setItem('importCategoryRules', JSON.stringify(rules || [])); } function applyCategoryRules(description, type, cats) { const text = String(description || '').toLowerCase(); const rules = getCategoryRules(); for (const rule of rules) { if (!rule || !rule.keyword) continue; if (rule.type && rule.type !== type) continue; if (!text.includes(String(rule.keyword).toLowerCase())) continue; const typeCats = cats.filter(c => c.type === type); const found = typeCats.find(c => c.name.toLowerCase() === String(rule.category || '').toLowerCase()); if (found) return found.id; } return ''; } function importFingerprint(txn) {
     return `${txn.date}|${String(txn.description || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40)}|${Number(txn.amount || 0).toFixed(2)}|${txn.type}`;
   }
 
-  function guessImportCategory(description, type, cats) {
+  function guessImportCategory(description, type, cats) {     const ruleMatch = applyCategoryRules(description, type, cats);     if (ruleMatch) return ruleMatch;
     const text = String(description || '').toLowerCase();
     const typeCats = cats.filter(c => c.type === type);
     for (const [catName, words] of Object.entries(IMPORT_CATEGORY_KEYWORDS)) {
@@ -4558,7 +4558,10 @@ input:focus, select:focus, textarea:focus {
     return fallback ? fallback.id : (typeCats[0] ? typeCats[0].id : '');
   }
 
-  async function buildImportPreview(csvText) {
+  function parseOFXText(text) { const t = String(text||''); const rows = [['Date','Description','Amount']]; const blocks = t.split(/<STMTTRN>/i).slice(1); for (const b of blocks) { const dm = b.match(/<DTPOSTED>\s*(\d{4})(\d{2})(\d{2})/i); const am = b.match(/<TRNAMT>\s*(-?\d+(?:\.\d+)?)/i); const nm = b.match(/<NAME>\s*([^<
+]+)/i); const mm = b.match(/<MEMO>\s*([^<
+]+)/i); if (!dm || !am) continue; const date = dm[1]+'-'+dm[2]+'-'+dm[3]; const desc = ((nm?nm[1]:'')+' '+(mm?mm[1]:'')).trim().replace(/"/g,"'"); rows.push([date, '"'+desc+'"', am[1]]); } return rows.map(r => r.join(',')).join('
+'); } function looksLikeOFX(text) { return /<OFX>|<STMTTRN>|OFXHEADER/i.test(String(text||'')); } async function buildImportPreview(csvText) {     if (looksLikeOFX(csvText)) { csvText = parseOFXText(csvText); }
     try {
       const parsed = parseCSVText(csvText);
       if (parsed.length < 2) { showToast('No CSV rows found'); return; }
