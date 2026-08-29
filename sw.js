@@ -1,6 +1,6 @@
 // Budget Tracker service worker
 // Bump CACHE_VERSION whenever you ship an update so clients refresh.
-const CACHE_VERSION = 'budget-tracker-v2';
+const CACHE_VERSION = 'budget-tracker-v3';
 
 // App shell files to precache (relative to this SW's scope: /budget-tracker/)
 const PRECACHE_URLS = [
