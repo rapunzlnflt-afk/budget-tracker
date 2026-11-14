@@ -402,6 +402,7 @@ input:focus, select:focus, textarea:focus {
    ============================================ */
 .main-content {
   flex: 1;
+  min-width: 0;
   margin-left: var(--sidebar-width);
   min-height: 100vh;
 }
@@ -1839,11 +1840,18 @@ input:focus, select:focus, textarea:focus {
 .goal-card:hover { box-shadow: var(--card-shadow-hover); }
 .savings-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
 .savings-header-btns { display: flex; gap: 8px; }
-.savings-header-btns .btn { flex: 1; white-space: nowrap; }
-@media (max-width: 480px) {
+.savings-header-btns .btn { white-space: nowrap; }
+@media (max-width: 600px) {
   .savings-header-row { flex-direction: column; align-items: stretch; }
-  .savings-header-btns { flex-direction: column; }
-  .savings-header-btns .btn { width: 100%; justify-content: center; }
+  .savings-header-btns .btn { flex: 1 1 0; min-width: 0; justify-content: center; padding-left: 10px; padding-right: 10px; }
+}
+/* Bill rows: two lines on phones so nothing runs off the edge */
+@media (max-width: 600px) {
+  .bill-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 12px; row-gap: 10px; padding: 14px 16px; }
+  .bill-card .transaction-cat-dot { align-self: start; margin-top: 6px; }
+  .bill-card-name { flex-wrap: wrap; row-gap: 4px; }
+  .bill-card .btn-mark-paid { grid-column: 2; justify-self: start; width: auto; }
+  .bill-card-actions { grid-column: 3; justify-self: end; }
 }
 .goal-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .goal-card-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--emerald-light); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
@@ -2861,9 +2869,9 @@ input:focus, select:focus, textarea:focus {
       </div>
       <div class="page-body">
         <div class="stat-grid" id="debt-stats"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+        <div class="savings-header-row">
           <div class="card-title" style="margin-bottom:0;">Your Debts</div>
-          <div style="display:flex;gap:8px;">
+          <div class="savings-header-btns">
             <button class="btn btn-secondary" id="btn-add-debt-payment-top">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               Record Payment
