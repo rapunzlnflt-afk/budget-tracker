@@ -1,6 +1,8 @@
 // Budget Tracker service worker
 // Bump CACHE_VERSION whenever you ship an update so clients refresh.
-const CACHE_VERSION = 'budget-tracker-v4';
+const CACHE_VERSION = 'budget-tracker-v5';
+// Only this app's own caches. Every CleartrackApps app shares cleartrackapps.com, so they all share one cache store.
+const isOwnCache = (k) => k.startsWith('budget-tracker-') && !k.startsWith('budget-tracker-demo');
 
 // App shell files to precache (relative to this SW's scope: /budget-tracker/)
 const PRECACHE_URLS = [
@@ -24,7 +26,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
-        keys.filter((key) => key !== CACHE_VERSION)
+        keys.filter((key) => isOwnCache(key) && key !== CACHE_VERSION)
             .map((key) => caches.delete(key))
       ))
       .then(() => self.clients.claim())
