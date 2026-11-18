@@ -630,8 +630,16 @@ input:focus, select:focus, textarea:focus {
 
 @media (max-width: 768px) {
   .page-header {
-    padding: 14px 20px 12px;
-    padding-top: 56px;
+    /* Title and subtitle sit beside the menu button, not under it */
+    padding: 14px 20px 12px 68px;
+    min-height: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  /* The open menu shows the logo there, so hide the button that would cover it */
+  .app-layout:has(.sidebar.open) .hamburger {
+    display: none;
   }
   .page-body {
     padding: 16px 16px 40px;
