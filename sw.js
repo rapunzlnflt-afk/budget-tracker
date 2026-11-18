@@ -1,6 +1,6 @@
 // Budget Tracker service worker
 // Bump CACHE_VERSION whenever you ship an update so clients refresh.
-const CACHE_VERSION = 'budget-tracker-v7';
+const CACHE_VERSION = 'budget-tracker-v8';
 // Only this app's own caches. Every CleartrackApps app shares cleartrackapps.com, so they all share one cache store.
 const isOwnCache = (k) => k.startsWith('budget-tracker-') && !k.startsWith('budget-tracker-demo');
 
@@ -9,7 +9,10 @@ const PRECACHE_URLS = [
   './',
   './index.html',
   './favicon-32.png',
-  './apple-touch-icon.png'
+  './apple-touch-icon.png',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // Install: precache the app shell, then activate immediately.
