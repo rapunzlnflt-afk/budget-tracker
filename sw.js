@@ -1,6 +1,6 @@
 // Budget Tracker service worker
 // Bump CACHE_VERSION whenever you ship an update so clients refresh.
-const CACHE_VERSION = 'budget-tracker-v8';
+const CACHE_VERSION = 'budget-tracker-v9';
 // Only this app's own caches. Every CleartrackApps app shares cleartrackapps.com, so they all share one cache store.
 const isOwnCache = (k) => k.startsWith('budget-tracker-') && !k.startsWith('budget-tracker-demo');
 
