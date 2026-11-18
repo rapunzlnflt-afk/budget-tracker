@@ -1673,6 +1673,21 @@ input:focus, select:focus, textarea:focus {
   display: block;
   animation: fadeIn 0.3s ease;
 }
+/* ============================================
+   DAILY VERSE (same pattern as Bootstraps)
+   ============================================ */
+.verse{text-align:center;margin:8px auto 0;max-width:340px;padding:18px 16px 96px;border-top:1px solid var(--border-color);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.verse[hidden]{display:none}
+.verse p{font-size:14px;line-height:1.45;color:var(--text-primary);font-style:italic}
+.verse cite{display:block;margin-top:4px;font-size:11px;font-style:normal;letter-spacing:.04em;color:var(--text-secondary)}
+.verse .vhint{display:block;margin-top:6px;font-size:10px;color:var(--text-muted)}
+.verse.swap p,.verse.swap cite{animation:vfade .45s ease}
+@keyframes vfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.settings-row .toggle-switch{flex-shrink:0}
+.settings-row .toggle-switch:not(.active){background:#d1d5db}
+[data-theme="dark"] .settings-row .toggle-switch:not(.active){background:#4b5563}
+.niv-note{font-size:0.75rem;color:var(--text-muted);line-height:1.45;margin-top:10px}
+
 
 @keyframes barGrow {
   from { width: 0; }
@@ -3134,6 +3149,23 @@ input:focus, select:focus, textarea:focus {
           </div>
         </div>
 
+        <!-- Daily Verse -->
+        <div class="settings-section">
+          <h3 class="settings-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            Daily Verse
+          </h3>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <div class="settings-row-label">Daily verse</div>
+                <div class="settings-row-desc">A new verse about money and stewardship each day, shown at the bottom of every page. Tap it for another.</div>
+              </div>
+              <div class="toggle-switch active" id="verse-toggle" role="switch" tabindex="0" aria-checked="true" aria-label="Daily verse"></div>
+            </div>
+          </div>
+        </div>
+
         <!-- About -->
         <div class="settings-section">
           <h3 class="settings-section-title">
@@ -3146,6 +3178,7 @@ input:focus, select:focus, textarea:focus {
             <div class="settings-about-version">Version 1.0</div>
             <div class="settings-about-tagline">Simple, Private, Offline</div>
             <div class="settings-about-note">Your data never leaves your device. No accounts, no cloud, no tracking.</div>
+            <div class="niv-note">Scripture quotations taken from The Holy Bible, New International Version&reg; NIV&reg; Copyright &copy; 1973, 1978, 1984, 2011 by Biblica, Inc.&trade; Used by permission. All rights reserved worldwide.</div>
           </div>
         </div>
 
@@ -3223,6 +3256,7 @@ input:focus, select:focus, textarea:focus {
 
   </div>
 </div>
+  <footer class="verse" id="verse" role="button" tabindex="0" aria-label="Verse of the day. Tap for another verse."><p>&ldquo;Whoever gathers money little by little makes it grow.&rdquo;</p><cite>Proverbs 13:11b (NIV)</cite></footer>
   </main>
 
   <!-- ========== FAB (Quick Add) ========== -->
@@ -6920,6 +6954,44 @@ async function loadDemoData() {
 
   init().catch(err => console.error('Init error:', err));    // Register the service worker for offline support.   if ('serviceWorker' in navigator) {     window.addEventListener('load', () => {       navigator.serviceWorker.register('sw.js', { scope: './' })         .then(reg => console.log('Service worker registered:', reg.scope))         .catch(err => console.error('Service worker registration failed:', err));     });   }
 
+})();
+</script>
+<script>
+/* ---------- daily verse (same verses and behavior as Bootstraps) ---------- */
+(function(){
+  var VERSES=[
+    ['Whoever gathers money little by little makes it grow.','Proverbs 13:11b'],
+    ['The wise store up choice food and olive oil, but fools gulp theirs down.','Proverbs 21:20'],
+    ['The plans of the diligent lead to profit as surely as haste leads to poverty.','Proverbs 21:5'],
+    ['Suppose one of you wants to build a tower. Won’t you first sit down and estimate the cost to see if you have enough money to complete it?','Luke 14:28'],
+    ['Whoever can be trusted with very little can also be trusted with much.','Luke 16:10a'],
+    ['On the first day of every week, each one of you should set aside a sum of money in keeping with your income, saving it up.','1 Corinthians 16:2a'],
+    ['Ants are creatures of little strength, yet they store up their food in the summer.','Proverbs 30:25'],
+    ['The rich rule over the poor, and the borrower is slave to the lender.','Proverbs 22:7'],
+    ['Be sure you know the condition of your flocks, give careful attention to your herds.','Proverbs 27:23'],
+    ['For where your treasure is, there your heart will be also.','Matthew 6:21'],
+    ['Keep your lives free from the love of money and be content with what you have.','Hebrews 13:5a'],
+    ['Commit to the Lord whatever you do, and he will establish your plans.','Proverbs 16:3'],
+    ['Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.','2 Corinthians 9:7'],
+    ['Honor the Lord with your wealth, with the firstfruits of all your crops.','Proverbs 3:9']
+  ];
+  var KEY='bt-daily-verse', shift=0;
+  function on(){ try { return localStorage.getItem(KEY)!=='off'; } catch(e){ return true; } }
+  function today(){ var d=new Date(), day=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000); var n=VERSES.length; return VERSES[(((day+shift)%n)+n)%n]; }
+  function render(anim){
+    var el=document.getElementById('verse'); if(!el) return;
+    el.hidden=!on(); var v=today();
+    el.innerHTML='<p>“'+v[0]+'”</p><cite>'+v[1]+' (NIV)</cite><span class="vhint">Tap for another verse · NIV® © Biblica, Inc. Used by permission.</span>';
+    if(anim){ el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); }
+    var t=document.getElementById('verse-toggle');
+    if(t){ t.classList.toggle('active',on()); t.setAttribute('aria-checked',String(on())); }
+  }
+  function next(){ shift++; render(true); }
+  function flip(){ try { localStorage.setItem(KEY,on()?'off':'on'); } catch(e){} render(); }
+  var el=document.getElementById('verse'), t=document.getElementById('verse-toggle');
+  if(el){ el.addEventListener('click',next); el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); next(); } }); }
+  if(t){ t.addEventListener('click',flip); t.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); flip(); } }); }
+  render();
 })();
 </script>
 </body>
