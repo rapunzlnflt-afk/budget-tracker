@@ -1,6 +1,6 @@
 // Budget Tracker service worker
 // Bump CACHE_VERSION whenever you ship an update so clients refresh.
-const CACHE_VERSION = 'budget-tracker-v6';
+const CACHE_VERSION = 'budget-tracker-v7';
 // Only this app's own caches. Every CleartrackApps app shares cleartrackapps.com, so they all share one cache store.
 const isOwnCache = (k) => k.startsWith('budget-tracker-') && !k.startsWith('budget-tracker-demo');
 
@@ -16,7 +16,8 @@ const PRECACHE_URLS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      // cache: 'reload' skips the browser's HTTP cache so a new version never stores an old copy
+      .then((cache) => cache.addAll(PRECACHE_URLS.map((u) => new Request(u, { cache: 'reload' }))))
       .then(() => self.skipWaiting())
   );
 });
@@ -42,10 +43,13 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
+      // no-cache: always check with the site, never reuse the browser's 10-minute HTTP copy
+      fetch(request, { cache: 'no-cache' })
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put('./index.html', copy));
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_VERSION).then((cache) => cache.put('./index.html', copy));
+          }
           return response;
         })
         .catch(() => caches.match('./index.html'))
