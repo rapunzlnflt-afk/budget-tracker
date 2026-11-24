@@ -120,7 +120,7 @@ html.lic-wait body{visibility:hidden!important;overflow:hidden!important}
   function friendly(err){
     var e = String(err || '');
     if (/rate_limited/i.test(e)) return 'Too many tries in a row. Wait 10 minutes, then try again.';
-    if (/activation limit/i.test(e)) return 'This key is already in use on ' + C.limit + ' devices. Free one up from My Orders, then try again.';
+    if (/activation limit/i.test(e)) return 'This key is already in use on ' + C.limit + ' devices. Email cleartrackapps@gmail.com and we will free one up.';
     if (/not found|invalid/i.test(e)) return "That key wasn't recognized. Copy it again from your receipt email.";
     if (/disabled|expired|inactive/i.test(e)) return 'This key has been turned off. Email ' + C.email + ' and we will help.';
     return e || "That key wasn't recognized.";
